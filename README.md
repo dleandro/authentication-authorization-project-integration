@@ -10,6 +10,6 @@
   The model is available on the path database/reset_database.sql.
   Note that we only have compatibility with mariadb;
 
-* If you choose to use your own database you must configure it on the path server/common/config/production.json or via the configuration endpoints present on our [documentation]() 
+* If you choose to use your own database you must configure it on the path server/common/config/production.json or via the configuration endpoints present on our [documentation](https://github.com/dleandro/authentication-authorization-project-integration/wiki/Descrição-dos-endpoints-e-da-estrutura-de-dados) 
 
 * Run npm run start on the root folder of our project and try out the documented endpoints
