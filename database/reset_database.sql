@@ -12,6 +12,7 @@ CREATE TABLE Permission(
 id int AUTO_INCREMENT ,
 method VARCHAR(10),
 path VARCHAR(50),
+description Varchar(100),
 PRIMARY KEY(id)
 );
 
@@ -67,7 +68,7 @@ description VARCHAR(30)
 );
 CREATE TABLE IDP(
 user_id INT,
-idp_id VARCHAR(1000),
+idp_id VARCHAR(20000),
 idpname VARCHAR(20),
 PRIMARY KEY(user_id),
 FOREIGN KEY(user_id) REFERENCES Users(id)
