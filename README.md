@@ -1,15 +1,39 @@
 # authentication-authorization-project-integration
 
-## How to run the application
+## Using our module
 
-* Clone this repo to your desired folder;
+* Step 1: Clone the repo to your desired folder;
 
-* Run npm install in the root folder of the project;
+* Step 2: Run ```$ npm install``` on the root folder of the cloned project;
 
-* If you choose to use our test database you may skip this step, if not you must run our sql model on your own database.
-  The model is available on the path database/reset_database.sql.
-  Note that we only have compatibility with mariadb;
+* Step 3: On your express app initialization insert the following line to setup our module 
+  ```require('root_folder_of_the_cloned_project/setup-module')(app)```;
+  
+* Step 4: Once you have the module set up you may call it anywhere you desire as you would with normal function libraries.
+Just require the module main file using this line ``` const module = require('root_folder_of_the_cloned_project/authization-module/authization') ```.
 
-* If you choose to use your own database you must configure it on the path server/common/config/production.json or via the configuration endpoints present on our [documentation](https://github.com/dleandro/authentication-authorization-project-integration/wiki/Descrição-dos-endpoints-e-da-estrutura-de-dados) 
+# Usage examples
 
-* Run npm run start on the root folder of our project and try out the documented endpoints
+User creation:
+```
+const data = require('../../authization-module/authization').user
+
+data.createUser(req.body.username, req.body.password)
+```
+
+User authentication:
+```
+const authentication = require('../../authization-module/authization').authenticate
+
+  authenticationRouter.post(
+    '/local',
+    authentication.usingLocal,
+    (req, res) => {
+      setResponse(res, { success: "login successful" }, 200)
+    }
+  )
+ ```
+
+Note that authentication and authorization functions need to be used as middleware because they require request, response and next parameters. All the other functions can be used wherever
+ 
+More documentation on the specific methods and their requirements will be available on this repo's wiki
