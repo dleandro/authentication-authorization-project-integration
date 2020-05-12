@@ -31,9 +31,65 @@ const authentication = require('../../authization-module/authization').authentic
     (req, res) => {
       setResponse(res, { success: "login successful" }, 200)
     }
+  
+   authenticationRouter.post(
+    '/google',
+    authentication.usingGoogle,
+    (req, res) => {
+      setResponse(res, { success: "login successful" }, 200)
+    }
+    
+    authenticationRouter.post(
+    '/google',
+    authentication.usingOffice365,
+    (req, res) => {
+      setResponse(res, { success: "login successful" }, 200)
+    }
   )
  ```
 
 Note that authentication and authorization functions need to be used as middleware because they require request, response and next parameters. All the other functions can be used wherever
  
 More documentation on the specific methods and their requirements will be available on this repo's wiki
+
+List creation:
+```
+const data = require('../../authization-module/authization').list
+
+data.addList(req.body.user_id, req.body.list, req.body.start_date, req.body.end_date, req.body.updater, req.body.active)
+```
+
+Permission creation:
+```
+const data = require('../../authization-module/authization').permission
+
+data.addPermission('POST', '/newList', 'gives a user permission to create new Lists')
+```
+
+Role creation:
+```
+const data = require('../../authization-module/authization').role
+
+data.addRole(req.body.role)
+```
+
+User Role assignment:
+```
+const data = require('../../authization-module/authization').userRole
+
+data.addUserRole(req.body.user, req.body.role, req.body.start_date, req.body.end_date, req.body.updater, req.body.active)
+```
+
+Role Permission creation:
+```
+const data = require('../../authization-module/authization').rolePermission
+
+data.addRolePermission(req.body.role, req.body.permission)
+```
+
+User History consultation:
+```
+const data = require('../../authization-module/authization').userHistory
+
+data.getAllHistories()
+```
