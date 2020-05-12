@@ -46,9 +46,9 @@ module.exports = function (app) {
     app.use(passport.session())
 
     //Interceptor that checks for authorization
-    app.use(
-        (req, res, next) => req.url.includes('authentications') ? next() : authorization.check(req, res, next)
-    )
+    //app.use(
+      //  (req, res, next) => req.url.includes('authentications') ? next() : authorization.check(req, res, next)
+    //)
 
     config.isModuleSetUp = true
 }
