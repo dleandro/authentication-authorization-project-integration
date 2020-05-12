@@ -6,8 +6,8 @@
 
 * Step 2: Run ```$ npm install``` on the root folder of the cloned project;
 
-* Step 3: On your express app initialization insert the following line to setup our module 
-  ```require('root_folder_of_the_cloned_project/setup-module')(app)```;
+* Step 3: On your express app initialization insert the following line to setup our module. This require line also returns the module's functions
+  ```var mod = require('root_folder_of_the_cloned_project/authization')(app)```;
   
 * Step 4: Once you have the module set up you may call it anywhere you desire as you would with normal function libraries.
 Just require the module main file using this line ``` const module = require('root_folder_of_the_cloned_project/authization-module/authization') ```.
