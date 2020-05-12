@@ -16,7 +16,12 @@ const
         }
     }
 
-async function getUserActiveList(userId) {
+/**
+ *
+ * @param userId
+ * @returns {Promise<{end_date: *, active, id, list: *, user: *, start_date: *, updater}>}
+ */
+async function getUsersActive(userId) {
     return dalUtils.executeQuery({
         statement: `Select * from Lists where user_id=? AND active=1 AND end_date>'${moment().format("YYYY-MM-DD HH:mm:ss")}'`,
         description: "getting user's active lists",
@@ -38,8 +43,17 @@ module.exports = {
 
 
 
-    // Creates a list entry with a user_id associated and a type of list
-    addList: (user_id, list, start_date, end_date, updater, active) => getUserActiveList(user_id)
+    /**
+     * Creates a list entry with a user_id associated and a type of list
+     * @param user_id
+     * @param list
+     * @param start_date
+     * @param end_date
+     * @param updater
+     * @param active
+     * @returns {Promise<CustomError>}
+     */
+    create: (user_id, list, start_date, end_date, updater, active) => getUsersActive(user_id)
         // getUsersActiveList returned a list which means we can't add another list to this user
         .then(val => errors.userDuplicateActiveList)
         // if it lands on catch it means that getUserActiveList threw an error meaning that this user has no active list
@@ -52,24 +66,35 @@ module.exports = {
 
             })),
 
-    // deactivates active list, it only deactivates because we don't wanna change inactive list's status for history purposes
-    deactivateList: (listId) => dalUtils.executeQuery(
+    /**
+     * deactivates active list, it only deactivates because we don't wanna change inactive list's status for history purposes
+     * @param listId
+     * @returns {*}
+     */
+    deactivate: (listId) => dalUtils.executeQuery(
         {
             statement: 'UPDATE Lists SET active = 0 WHERE id = ?',
             description: "deactivate list's status",
             params: [listId]
         }),
 
-    // deletes the user association to a list
-    deleteList: (listId) => dalUtils.executeQuery(
+    /**
+     * deletes the user association to a list
+     * @param listId
+     * @returns {*}
+     */
+    delete: (listId) => dalUtils.executeQuery(
         {
             statement: `DELETE FROM Lists WHERE id=?`,
             description: "deleting list",
             params: [listId]
         }),
 
-    // asks the database for all list entries
-    getLists: () => dalUtils.executeQuery(
+    /**
+     * asks the database for all list entries
+     * @returns {PromiseLike<Uint8Array | BigInt64Array | *[] | Float64Array | Int8Array | Float32Array | Int32Array | Uint32Array | Uint8ClampedArray | BigUint64Array | Int16Array | Uint16Array> | Promise<Uint8Array | BigInt64Array | *[] | Float64Array | Int8Array | Float32Array | Int32Array | Uint32Array | Uint8ClampedArray | BigUint64Array | Int16Array | Uint16Array>}
+     */
+    getAll: () => dalUtils.executeQuery(
         {
             statement: `Select * from Lists`,
             description: "getting all lists",
@@ -78,8 +103,11 @@ module.exports = {
         .then(result => result.map(list => parseList(list)))
     ,
 
-    // asks the database for all list entries that are active at the moment
-    getActiveLists: () => dalUtils.executeQuery(
+    /**
+     * asks the database for all list entries that are active at the moment
+     * @returns {PromiseLike<function(*=): *> | Promise<function(*=): *>}
+     */
+    getAllActive: () => dalUtils.executeQuery(
         {
             statement: `Select * from Lists where active=1 AND end_date>'${moment().format("YYYY-MM-DD HH:mm:ss")}'`,
             description: "getting active lists",
@@ -88,12 +116,16 @@ module.exports = {
         .then(result => result.map(list => parseList(list))),
 
     // asks the database for all list entries that are active and associated with a specific user
-    getUserActiveList,
+    getUsersActive,
 
-    isBlackListed: (userId) => dalUtils.executeQuery(
-        {
+    isUserBlackListed: async (userId) => {
+
+        const query = {
             statement: `Select * from Lists where user_id=? AND active=1 AND LIST='BLACK'`,
             description: "checking if user is blacklisted",
             params: [userId]
-        })
+        }
+
+        return await dalUtils.executeQuery(query)
+    }
 }

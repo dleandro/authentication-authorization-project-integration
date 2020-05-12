@@ -19,6 +19,7 @@
         "database": "r15dtqer5c72jvex"
     },
     "port" : 8082,
-    "BASE_URL": "http://localhost:8082"
-
+    "BASE_URL": "http://localhost:8082",
+    "isModuleSetUp": false
+    
 }

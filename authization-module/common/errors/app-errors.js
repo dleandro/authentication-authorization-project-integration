@@ -1,25 +1,43 @@
 'use strict'
-
+/**
+ *
+ * @type {CustomError}
+ */
 const CustomError = require('./custom-error')
-
+/**
+ *
+ * @type {{
+ * userRoleNotFound: CustomError,
+ * userDuplicateActiveList: CustomError,
+ * userNotAuthenticated: CustomError,
+ * errorExecutingQuery: (function(*): CustomError),
+ * noUsersFound: CustomError,
+ * noListFound: CustomError,
+ * dbConnection: CustomError,
+ * duplicateValues: CustomError}}
+ */
 module.exports = {
-    
+    /**
+     *
+     * @param failedQuery
+     * @returns {CustomError}
+     */
     errorExecutingQuery: (failedQuery) => new CustomError(JSON.stringify({
         title: "Problem executing Query",
         detail: `There was a problem executing the query, check if all the data was inserted correctly. The failed Query was the following ${failedQuery}`,
-        status: 400 
+        status: 400
     })),
-    
+
     duplicateValues: new CustomError(JSON.stringify({
         title: "Duplicate Values",
         detail: "Value already inserted,Please choose another one",
-        status: 403 
+        status: 403
     })),
 
-    noUsersFound: new CustomError(JSON.stringify({ 
+    noUsersFound: new CustomError(JSON.stringify({
         title: "No users found",
         detail: "No users with these parameters are currently on the database",
-        status: 404 
+        status: 404
     })),
 
     dbConnection: new CustomError(JSON.stringify({
@@ -49,6 +67,16 @@ module.exports = {
     userRoleNotFound: new CustomError(JSON.stringify({
         title: "User does not have roles",
         detail: "User tried to access a resource that requires a specific role and he doesn't meet those requirements",
+        status: 404
+    })),
+    permissionNotFound: new CustomError(JSON.stringify({
+        title: "Permissions does not exist",
+        detail: "The permission that you are trying to acess does not exist in the database",
+        status: 404
+    })),
+    permissionRolesNotFound :new CustomError(JSON.stringify({
+        title: "Permission Is Not Associated with this Role",
+        detail: "The permission that you are trying to acess is not associated with this role",
         status: 404
     })),
 }

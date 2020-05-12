@@ -4,7 +4,7 @@ const dalUtils = require('../common/util/dal-utils')
 module.exports = {
     
 
-        addRolePermission: async (role, permission) => {
+        create: async (role, permission) => {
             
             const query = {
                 statement: `INSERT INTO Roles_Permission(role,permission) VALUES (?,?);`,
@@ -22,7 +22,7 @@ module.exports = {
             
         },
 
-        deleteRolePermission: async (role, permission) => {
+        delete: async (role, permission) => {
             
             const query = {
                 statement: `DELETE FROM Roles_Permission Where role=? AND permission=?`,
@@ -39,6 +39,7 @@ module.exports = {
             
             
         },
+        
         getRolesByPermission: async (permission) => {
             
             const query = {

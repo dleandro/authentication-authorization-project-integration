@@ -64,7 +64,7 @@ FOREIGN KEY (user_id) REFERENCES Users(id)
 CREATE TABLE Users_History (
 user_id INT,
 DATE DATETIME,
-description VARCHAR(30)
+description VARCHAR(1000)
 );
 CREATE TABLE IDP(
 user_id INT,

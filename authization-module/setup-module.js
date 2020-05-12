@@ -9,10 +9,12 @@ const
     config = require('./common/config/config'),
     MySQLStore = require('express-mysql-session')(session),
     sessionStore = new MySQLStore(config.database_opts),
-    checkAuth = require('./functionalities/check-auth')
+    authorization = require('./functionalities/authorizations')
 
 // This module is used to setup middleware on the app passed as a parameter
 module.exports = function (app) {
+
+    // Accept request's from different origins, necessary to use our web application
     app.use(require('cors')({
         // how to change origins between clients
         "origin": "http://localhost:3000",
@@ -27,14 +29,12 @@ module.exports = function (app) {
     // Makes it easier to manage cookies
     app.use(cookieParser())
 
-    // Accept request's from different origins, necessary to use our web application
-
-
+    // set up session middleware
     app.use(session({
         // to keep session active instead of letting it change to the idle state
         resave: false,
         //saveUninitialized to false to only create a session if a UA(User agent) made a login
-        saveUninitialized: true,
+        saveUninitialized: false,
         store: sessionStore,
         secret: cookie_secret,
         cookie: {
@@ -42,9 +42,13 @@ module.exports = function (app) {
         }
     }))
 
-    //Interceptor that checks for authorization
-    //app.use(checkAuth.hasPermissions)
-
     app.use(passport.initialize())
     app.use(passport.session())
+
+    //Interceptor that checks for authorization
+    app.use(
+        (req, res, next) => req.url.includes('authentications') ? next() : authorization.check(req, res, next)
+    )
+
+    config.isModuleSetUp = true
 }

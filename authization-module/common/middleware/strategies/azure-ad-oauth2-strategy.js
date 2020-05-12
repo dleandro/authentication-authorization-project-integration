@@ -11,17 +11,20 @@ const strategy = new AzureAdOAuth2Strategy({
         callbackURL: config.azureAD.callbackURL,
         tenant: config.azureAD.tenant
     },
-    async function (accessToken, refresh_token, params, profile, done) {
+    async function (accessToken, refreshToken, params, profile, done) {
         // currently we can't find a way to exchange access token by user info (see userProfile implementation), so
         // you will need a jwt-package like https://github.com/auth0/node-jsonwebtoken to decode id_token and get waad profile
         var mail = jwt.decode(params.id_token).email
 
         var user = await passportUtils.findCorrespondingUser(mail)
-        
         if (!user) {
             user = await passportUtils.createUser(params.id_token, 'azureAD', mail, null)
         }
-        
+        if(await passportUtils.isBlackListed(user.id)){
+            passportUtils.addNotification(user.id)
+            done(null, false, { message: 'User is BlackListed' })
+            return
+        }
         done(null, user)
     })
 

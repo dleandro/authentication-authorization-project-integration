@@ -10,9 +10,6 @@ const strategy = new OpenIDStrategy({
         clientSecret: 'vs0R8tvgMv2w2rhuHtRPT9nK'
     },
     function(identifier, done) {
-        //User.findOrCreate({ openId: identifier }, function(err, user) {
-        //done(err, user);
-        // });
     }
 )
 

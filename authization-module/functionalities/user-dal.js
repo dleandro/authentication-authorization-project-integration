@@ -7,7 +7,7 @@ const
     dalUtils = require('../common/util/dal-utils'),
     errors = require('../common/errors/app-errors'),
 
-    getUserById = async (id) => {
+    getById = async (id) => {
         var result
 
         const query = {
@@ -45,9 +45,9 @@ const
 module.exports = {
 
     /* Requests the database for a user with given id */
-    getUserById,
+    getById,
 
-    getUserbyIDP: async (idp) => {
+    getByIdp: async (idp) => {
         const query = {
             statement: `Select * from IDP where idp_id= ?`,
             description: "get user by id",
@@ -58,11 +58,11 @@ module.exports = {
 
         if (result[0] == null) return null
 
-        return await getUserById(result[0].user_id)
+        return await getById(result[0].user_id)
     },
 
 
-    getUserByUsername: async (username) => {
+    getByUsername: async (username) => {
 
         var result
 
@@ -103,7 +103,7 @@ module.exports = {
     Requests the database to return user's that match username and password parameters
     returns the first user found with such parameters
     */
-    getUser: async (username, password) => {
+    get: async (username, password) => {
         var result
 
         const query = {
@@ -140,7 +140,7 @@ module.exports = {
     /*
     Requests the database for all existing users
     */
-    getAllUsers: async () => {
+    getAll: async () => {
 
         var result
 
@@ -181,7 +181,7 @@ module.exports = {
     Requests the database for a new entry in the table users
     Should throw error if there already exists a user with the same parameters   
     */
-    insertUser: async (username, password) => {
+    create: async (username, password) => {
 
         var result
 
@@ -203,7 +203,7 @@ module.exports = {
 
         try {
             //make sure user creation is registered on the user's history
-            await userHistoryDal.addUserHistory(result.insertId, moment().format("YYYY-MM-DD HH:mm:ss"), "User creation")
+            await userHistoryDal.create(result.insertId, moment().format("YYYY-MM-DD HH:mm:ss"), "User creation")
 
             return result
 
@@ -212,22 +212,7 @@ module.exports = {
         }
 
     },
-    insertIDP: async (idp_id, idpname, user_id) => {
-        const query = {
-            statement: 'Insert into IDP(user_id,idp_id,idpname) values (?,?,?)',
-            description: "user's username update",
-            params: [user_id, idp_id, idpname]
-        }
-        try {
 
-            return await dalUtils.executeQuery(query)
-
-
-        } catch (error) {
-
-            throw error
-        }
-    },
 
     // update specific user's username 
     updateUsername: async (username, id) => {
@@ -253,7 +238,7 @@ module.exports = {
         try {
 
             //make sure username update is registered on the user's history
-            await userHistoryDal.addUserHistory(id, moment().format("YYYY-MM-DD HH:mm:ss"), "Username update")
+            await userHistoryDal.create(id, moment().format("YYYY-MM-DD HH:mm:ss"), "Username update")
 
             return result
         } catch (error) {
@@ -286,7 +271,7 @@ module.exports = {
         try {
 
             //make sure password update is registered on the user's history
-            await userHistoryDal.addUserHistory(id, moment().format("YYYY-MM-DD HH:mm:ss"), "Password update")
+            await userHistoryDal.create(id, moment().format("YYYY-MM-DD HH:mm:ss"), "Password update")
 
             return result
 
@@ -297,7 +282,7 @@ module.exports = {
     },
 
     // delete user in the database with given id
-    deleteUser: async (userId) => {
+    delete: async (userId) => {
 
         var result
 
@@ -325,7 +310,7 @@ module.exports = {
         try {
 
             //make sure username update is registered on the user's history
-            await userHistoryDal.addUserHistory(userId, moment().format("YYYY-MM-DD HH:mm:ss"), "User deleted")
+            await userHistoryDal.create(userId, moment().format("YYYY-MM-DD HH:mm:ss"), "User deleted")
 
             return result
         } catch (error) {

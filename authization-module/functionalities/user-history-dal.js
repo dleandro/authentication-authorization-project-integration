@@ -5,7 +5,7 @@ module.exports = {
 
 
 
-    addUserHistory: async (userId, date, description) => {
+    create: async (userId, date, description) => {
 
         const query = {
             statement: 'INSERT INTO Users_History(user_id,date,description) VALUES (?,?,?);',
@@ -22,7 +22,7 @@ module.exports = {
 
     },
 
-    getAllHistories: async () => {
+    getAll: async () => {
 
         const query = {
             statement: "SELECT * FROM Users_History",
@@ -40,7 +40,7 @@ module.exports = {
 
     },
 
-    getAllHistoriesFromSpecificUser: async (userId) => {
+    getAllFromUser: async (userId) => {
 
         const query = {
             statement: "SELECT * FROM Users_History WHERE id = ?",
