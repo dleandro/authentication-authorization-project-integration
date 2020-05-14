@@ -1,8 +1,5 @@
 'use strict'
-/**
- *
- * @type {{setResponse: setResponse}}
- */
+
 module.exports = {
 
     /**

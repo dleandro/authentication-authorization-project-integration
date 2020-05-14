@@ -4,18 +4,7 @@
  * @type {CustomError}
  */
 const CustomError = require('./custom-error')
-/**
- *
- * @type {{
- * userRoleNotFound: CustomError,
- * userDuplicateActiveList: CustomError,
- * userNotAuthenticated: CustomError,
- * errorExecutingQuery: (function(*): CustomError),
- * noUsersFound: CustomError,
- * noListFound: CustomError,
- * dbConnection: CustomError,
- * duplicateValues: CustomError}}
- */
+
 module.exports = {
     /**
      *
@@ -57,7 +46,11 @@ module.exports = {
         detail: "query didn't go through because there were no lists found with this id",
         status: 404
     })),
-
+    noValueFound: new CustomError(JSON.stringify({
+        title: "No Value found",
+        detail: "Query returned an empty value",
+        status: 204
+    })),
     userNotAuthenticated: new CustomError(JSON.stringify({
         title: "User is not authenticated",
         detail: "User tried to access a resource that requires authentication and he doesn't meet those requirements",

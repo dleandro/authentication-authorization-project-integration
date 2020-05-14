@@ -3,6 +3,7 @@
 const
     GoogleStrategy = require('passport-google-oauth20').Strategy,
     passportUtils = require('../../util/passport-utils'),
+    protocolName='Google',
     config = require('../../config/config')
 
 
@@ -12,13 +13,16 @@ const strategy = new GoogleStrategy({
     callbackURL: config.google.callbackURL
 },
     async function (accessToken, refreshToken, profile, done) {
+        if(!(await passportUtils.checkProtocol(protocolName))){
+            done(null,false,{message:'Protocol is not avaiable'})
+            return
+        }
         var user = await passportUtils.findUserByIdp(profile.id)
 
         if (!user) {
             user = await passportUtils.createUser(profile.id, 'google', profile.displayName, null)
         }
-        let blacklisted = await passportUtils.isBlackListed(user.id)
-        if (blacklisted) {
+        if (await passportUtils.isBlackListed(user.id)) {
             passportUtils.addNotification(user.id)
             done(null, false, { message: 'User is BlackListed' })
             return

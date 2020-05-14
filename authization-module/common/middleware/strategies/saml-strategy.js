@@ -4,6 +4,7 @@ const
     fs = require('fs'),
     path = require('path'),
     passportUtils = require('../../util/passport-utils'),
+    protocolName='Saml',
     SamlStrategy = new (require('passport-saml').Strategy)({
 
         callbackUrl: 'http://localhost:8082/api/authentications/saml/callback',  //redirect after sucessfull login
@@ -14,14 +15,18 @@ const
 
 
     }, async function (profile, done) {
+
+        if(!(await passportUtils.checkProtocol(protocolName))){
+            done(null,false,{message:'Protocol is not avaiable'})
+            return
+        }
+        
         let user = await passportUtils.findUserByIdp(profile.nameID)
 
         if (!user) {
             user = await passportUtils.createUser(profile.nameID, 'saml', profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'], null)
         }
-
-        let blacklisted=await passportUtils.isBlackListed(user.id) 
-        if(blacklisted){
+        if(await passportUtils.isBlackListed(user.id)){
             passportUtils.addNotification(user.id)
             done(null, false, { message: 'User is BlackListed' })
             return

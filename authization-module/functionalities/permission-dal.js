@@ -4,94 +4,74 @@
 const dalUtils = require('../common/util/dal-utils')
 
 module.exports = {
-
-    create: async (method, path, description) => {
-
-        const query = {
-            statement: `INSERT INTO Permission(method,path,description) VALUES (?,?,?);`,
+    /**
+     *
+     * @param method
+     * @param path
+     * @param description
+     * @returns {Promise<void>}
+     */
+    create: async (method, path, description) => dalUtils
+        .executeQuery({
+            statement: config.sgbd == 'mysql' ? 
+            `INSERT INTO Permission(method,path,description) VALUES (?,?,?);` :
+            `INSERT INTO Permission(method,path,description) VALUES ($1,$2,$3) RETURNING id;`,
             description: "adding permission",
             params: [method, path, description]
-        }
+        }).then(async result => {
+            return config.sgbd == 'mysql' ? result : { insertId: result.rows[0].id }
+        }),
 
-        try {
-            return await dalUtils.executeQuery(query)
-
-        } catch (error) {
-            throw error
-        }
-    },
-
-    delete: async (method, path) => {
-
-        const query = {
+    /**
+     *
+     * @param method
+     * @param path
+     * @returns {Promise<void>}
+     */
+    delete: async (method, path) => dalUtils
+        .executeQuery({
             statement: `DELETE FROM Permission WHERE id=?`,
             description: "deleting permission",
             params: [method, path]
-        }
-
-        try {
-
-            return await dalUtils.executeQuery(query)
-
-        } catch (error) {
-            throw error
-        }
-
-    },
-
-    getAll: async () => {
-
-        const query = {
+        }),
+    /**
+     *
+     * @returns {Promise<void>}
+     */
+    getAll: async () => dalUtils
+        .executeQuery({
             statement: `Select * from Permission`,
             description: "getting all permissions",
             params: []
-        }
-
-        try {
-            return await dalUtils.executeQuery(query)
-
-        } catch (error) {
-            throw error
-        }
-    },
-
-    getSpecificById: async (id) => {
-
-        const query = {
+        }),
+    /**
+     *
+     * @param id
+     * @returns {Promise<void>}
+     */
+    getSpecificById: async (id) => dalUtils
+        .executeQuery({
             statement: `Select * from Permission where id=?`,
             description: "get permission by id",
             params: [id]
-        }
-
-        try {
-            return await dalUtils.executeQuery(query)
-
-        } catch (error) {
-            throw error
-        }
-    },
-
-    getSpecific: async (method, path) => {
-
-        const query = {
-            statement: `Select * from Permission where method=? and path=?`,
-            description: "get permission by id",
-            params: [method, path]
-        }
-
-        try {
-            let result = await dalUtils.executeQuery(query)
-            return result.length == 0 ? null : {
-                id: result[0].id,
-                method: result[0].method,
-                path: result[0].path
-            }
-
-        } catch (error) {
-            throw error
-        }
-    },
-
-
+        }),
+    /**
+     *
+     * @param method
+     * @param path
+     * @returns {Promise<*>}
+     */
+    getSpecific: async (method, path) => dalUtils
+        .executeQuery(
+            {
+                statement: `Select * from Permission where method=? and path=?`,
+                description: "get permission by id",
+                params: [method, path]
+            })
+        .then(result => result.length === 0 ? null : {
+            id: result[0].id,
+            method: result[0].method,
+            path: result[0].path
+        }),
 
 }

@@ -1,15 +1,24 @@
 'use strict'
 
 const
-    passport = require('./common/middleware/passport'),
+    passport = require('./passport'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
-    cookie_secret = 'justasecretstring', // should change after a while if it has some security implication openssl rand -hex 32 on the cmd
-    config = require('./common/config/config'),
-    MySQLStore = require('express-mysql-session')(session),
-    sessionStore = new MySQLStore(config.database_opts),
-    authorization = require('./functionalities/authorizations')
+    cookieSecret = 'justasecretstring', // should change after a while if it has some security implication openssl rand -hex 32 on the cmd
+    config = require('../config/config'),
+    KnexSessionStore = require("connect-session-knex")(session),
+    Knex = require('knex');
+
+const knex = Knex({
+    client: config.sgbd,
+    connection: config.database_opts
+});
+
+const store = new KnexSessionStore({
+    knex: knex,
+    tablename: "sessions" // optional. Defaults to 'sessions'
+});
 
 // This module is used to setup middleware on the app passed as a parameter
 module.exports = function (app) {
@@ -17,7 +26,7 @@ module.exports = function (app) {
     // Accept request's from different origins, necessary to use our web application
     app.use(require('cors')({
         // how to change origins between clients
-        "origin": "http://localhost:3000",
+        "origin": config.webAppUri,
         "methods": "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
         "credentials": true
     }))
@@ -35,8 +44,8 @@ module.exports = function (app) {
         resave: false,
         //saveUninitialized to false to only create a session if a UA(User agent) made a login
         saveUninitialized: false,
-        store: sessionStore,
-        secret: cookie_secret,
+        store: store,
+        secret: cookieSecret,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24
         }
@@ -47,7 +56,7 @@ module.exports = function (app) {
 
     //Interceptor that checks for authorization
     //app.use(
-      //  (req, res, next) => req.url.includes('authentications') ? next() : authorization.check(req, res, next)
+    //  (req, res, next) => req.url.includes('authentications') ? next() : authorization.check(req, res, next)
     //)
 
     config.isModuleSetUp = true

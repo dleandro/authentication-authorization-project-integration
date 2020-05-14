@@ -1,11 +1,27 @@
 'use strict'
 
 const db = require('./db'),
-    errors = require('../errors/app-errors')
-/**
- *
- * @type {{throwErrorIfNecessary: throwErrorIfNecessary, executeQuery: executeQuery}}
- */
+    errors = require('../errors/app-errors'),
+    config = require('../config/config'),
+
+    formatQueryForPG = async (statement) => {
+        var wildCardIndex = 1
+        var newStatement = ""
+
+        Array.from(statement).forEach(char => {
+
+            if (char == '?') {
+                wildCardIndex++
+                newStatement += `$${wildCardIndex - 1}`
+                return
+            }
+
+            newStatement += char
+        })
+
+        return newStatement
+    }
+
 module.exports = {
 
     /**
@@ -24,21 +40,37 @@ module.exports = {
             } catch (error) {
                 throw errors.dbConnection
             }
-            const rows = await connection.query(query.statement, query.params);
-            return rows
+
+            query.statement = config.sgbd == "mysql" ? query.statement : await formatQueryForPG(query.statement)
+            return config.sgbd == "mysql" ?
+                await connection.query(query.statement, query.params) :
+                (await connection.query(query.statement, query.params)).rows;
         } catch (error) {
             throw errors.errorExecutingQuery(`${error.message} on query ${query.description}`)
         } finally {
-            await connection.end();
+            connection.end()
         }
     },
 
+    /**
+     * @param query
+     * @returns {Promise<unknown>}
+     */
     executeQueryWithReturn: (query) => {
         var connection;
         return db.connect()
             .catch(err => { throw errors.dbConnection })
-            .then(con => { connection = con; return con.query(query.statement, query.params) })
+            .then(con => {
+                connection = con;
+                return con.query(query.statement, query.params)
+            })
             .catch(err => { throw errors.errorExecutingQuery(`${error.message} on query ${query.description}`) })
+            .then(data => {
+                if (data.length) {
+                    return data
+                }
+                throw errors.noUsersFound
+            })
             .finally(() => { connection.end() }) //nunca retornar no finnally!
             ;
     },
