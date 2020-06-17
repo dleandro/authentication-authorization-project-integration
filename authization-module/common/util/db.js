@@ -1,49 +1,38 @@
 'use strict'
 
 const
-  config = require("../config/config")
+    config = require("../config/config"),
+    { Sequelize } = require('sequelize')
+
+// setup database connection with sequelize
+const sequelize = new Sequelize(config.database_opts.database, config.database_opts.user, config.database_opts.password, {
+    host: config.database_opts.host,
+    dialect: config.database_opts.sgbd,
+    query: { raw: true }
+})
+
+config.sequelize = sequelize
 
 
-module.exports = {
+async function databasesetup(rbac_opts) {
 
-  /**
-   *
-   * @returns {Promise<PoolConnection>}
-   */
-  connect: config.sgbd == "mysql" ? async () => {
-    const mariadb = require('mariadb')
-    let connection
+    // defining the EA model
+    const { User, List, Protocols,Role } = require('../../resources/sequelize-model')
 
-  
-    try {
-     connection = await mariadb.createConnection(config.database_opts)
-      return connection
+    // sync present state of the database with our models
+    await sequelize.sync()
 
-    } catch (err) {
+    console.log('database setup correctly')
 
-      console.log('unable to connect')
+    await User.findOrCreate({ where:{username: "superuser", password: "superuser" }})
+    await List.findOrCreate({where:{ "list": "BLACK" }})
+    await List.findOrCreate({where:{ "list": "GREY" }})
+    await List.findOrCreate({where:{ "list": "RED" }})
+    await Protocols.findOrCreate({where:{"protocol": "Google", "active": 1 }})
+    await Protocols.findOrCreate({where:{ "protocol": "AzureAD", "active": 1 }})
+    await Protocols.findOrCreate({where:{ "protocol": "Saml", "active": 1}})
 
-      throw err;
-    }
-   
-  } : async () => {
-
-    const { Pool } = require('pg')
-
-    var pool
-
-    try {
-
-      pool = new Pool(config.database_opts)
-      return pool
-    } catch (err) {
-
-      console.log('unable to connect')
-
-      throw err;
-    }
-
-  }
-
-
+    return require('../middleware/rbac')(rbac_opts)
 }
+
+module.exports = databasesetup

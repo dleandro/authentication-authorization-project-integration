@@ -9,7 +9,7 @@ const strategy = new OpenIDStrategy({
         clientID: '523982739771-2hkfdqls3uapvlf0c111i6qhnidfgt44.apps.googleusercontent.com',
         clientSecret: 'vs0R8tvgMv2w2rhuHtRPT9nK'
     },
-    function(identifier, done) {
+    function (identifier, done) {
     }
 )
 
