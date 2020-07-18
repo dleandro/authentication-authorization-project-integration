@@ -12,7 +12,7 @@
   },
   "saml": {
     "callbackUrl": "http://localhost:8082/api/authentications/saml/callback",
-    "entryPoint": "https://authentication-node.eu.auth0.com/samlp/gkngnFEKD5tU9H6gaWR0UR7eqolioXaX",
+    "entryPoint": "https://login.microsoftonline.com/bb367ab9-9da9-455e-b938-fd65cd29f5ae/saml2",
     "issuer": "aa-node-component"
   },
   "database_opts": {},
