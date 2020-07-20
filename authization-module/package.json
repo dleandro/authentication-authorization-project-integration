@@ -1,5 +1,5 @@
 {
-  "name": "authization",
+  "name": "@authization/authization",
   "jest": {
     "verbose": true,
     "testResultsProcessor": "jest-sonar-reporter"
@@ -9,7 +9,7 @@
     "reportFile": "test-reporter.xml",
     "indent": 4
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Module for authentication and authorization",
   "main": "authization.js",
   "scripts": {
@@ -46,5 +46,9 @@
   "devDependencies": {
     "jest": "^26.0.1",
     "jest-sonar-reporter": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://https://github.com/dleandro/authentication-authorization-project-integration.git"
   }
 }
