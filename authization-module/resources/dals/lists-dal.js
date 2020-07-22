@@ -82,7 +82,7 @@ module.exports = {
 
     update: (id, list) => tryCatch(() => List.update({ list: list }, { where: { id: id } })),
 
-    getUsersInThisList: (id) => tryCatch(() => List.findAll({ where: { id: id }, include: [User], raw: true })),
+    getUsersInThisList: (id) => tryCatch(() => UserList.findAll({ where: { UserId: id }, include: [User], raw: true })),
 
     isUserBlackListed: (userId) =>
         tryCatch(() =>

@@ -36,7 +36,7 @@ module.exports = {
      * checks if all User roles are active
      * @returns {Promise<*>}
      */
-    getActive: tryCatch(() => UserRole.findAll({ where: { active: 1 } })),
+    getActive: () => tryCatch(UserRole.findAll({ where: { active: 1 } })),
     /**
      *
      * @param id
@@ -53,5 +53,8 @@ module.exports = {
      * @param id
      * @returns {Promise<void>}
      */
-    getById: (id) => tryCatch(() => UserRole.findByPk(id))
+    getById: (id) => tryCatch(() => UserRole.findByPk(id)),
+
+    getUserRoles: (userId) => tryCatch(() => UserRole.findAll({ where: { UserId: userId }, include: [Role], raw: true }))
+
 }
