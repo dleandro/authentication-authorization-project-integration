@@ -13,7 +13,7 @@
   "saml": {
     "callbackUrl": "https://webapi-dot-auth-authorization.ew.r.appspot.com/api/authentications/saml/callback",
     "entryPoint": "https://login.microsoftonline.com/bb367ab9-9da9-455e-b938-fd65cd29f5ae/saml2",
-    "issuer": "aa-node-component"
+    "issuer": "https://sts.windows.net/bb367ab9-9da9-455e-b938-fd65cd29f5ae/"
   },
   "database_opts": {},
   "rbac": {},

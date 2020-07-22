@@ -11,8 +11,7 @@ const
         callbackUrl: config.callbackUrl,
         entryPoint: config.entryPoint,
         issuer: config.issuer,
-        cert: fs.readFileSync(path.join(__dirname, '../../../certificates/authentication-node.pem'), 'utf-8'),
-        privateCert: fs.readFileSync(path.join(__dirname, '../../../certificates/privateKey.pem'), 'utf-8'),
+        cert: fs.readFileSync(path.join(__dirname, '../../../certificates/AuthizationApplication.cer'), 'utf-8')
 
     }, async function (profile, done) {
 
