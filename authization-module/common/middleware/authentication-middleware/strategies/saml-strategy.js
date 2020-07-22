@@ -8,10 +8,11 @@ const
     protocolName = 'Saml',
     SamlStrategy = new (require('passport-saml').Strategy)({
 
-        callbackUrl: config.callbackUrl,
-        entryPoint: config.entryPoint,
-        issuer: config.issuer,
-        cert: fs.readFileSync(path.join(__dirname, '../../../certificates/AuthizationApplication.cer'), 'utf-8')
+        callbackUrl: config.saml.callbackUrl,
+        entryPoint: config.saml.entryPoint,
+        issuer: config.saml.issuer,
+        cert: fs.readFileSync(path.join(__dirname, '../../../certificates/AuthizationApplication.cer'), 'utf-8'),
+        signatureAlgorithm:'sha256'
 
     }, async function (profile, done) {
 
