@@ -55,6 +55,9 @@ module.exports = {
      */
     getById: (id) => tryCatch(() => UserRole.findByPk(id)),
 
-    getUserRoles: (userId) => tryCatch(() => UserRole.findAll({ where: { UserId: userId }, include: [Role], raw: true }))
+    getUserRoles: (userId) => tryCatch(() => UserRole.findAll({ where: { UserId: userId }, include: [Role], raw: true })),
+
+    delete: (UserId,RoleId) => tryCatch(() => UserRole.destroy({ where: { UserId: UserId,RoleId:RoleId } })),
+
 
 }

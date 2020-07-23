@@ -15,14 +15,16 @@ const
         signatureAlgorithm:'sha256'
 
     }, async function (profile, done) {
-
+        console.log('VAI COMEÇAR')
         if (!(await passportUtils.checkProtocol(protocolName))) {
             done(null, false, { message: 'Protocol is not avaiable' });
             return;
         }
-
+        console.log('Passou o checkProtocol')
+        console.log('Showing profile obj...')
+        console.log(profile)
         let user = await passportUtils.findUserByIdp(profile.nameID);
-
+        console.log(user)
         if (!user) {
             user = await passportUtils.createUser(profile.nameID, 'saml', profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'], 'null');
         }
@@ -31,6 +33,7 @@ const
             done(null, false, { message: 'User is BlackListed' });
             return;
         }
+        console.log('CHEGOU AO FIM!')
         done(null, user);
     });
 

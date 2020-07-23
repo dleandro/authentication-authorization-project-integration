@@ -131,8 +131,8 @@ User.hasOne(Idp, { foreignKey: 'user_id' })
  */
 
 const UserRoles = UserAssociation('UserRoles');
-Role.belongsToMany(User, { through: UserRoles, foreignKey: 'updater' });
-User.belongsToMany(Role, { through: UserRoles, foreignKey: 'updater' });
+Role.belongsToMany(User, { through: UserRoles});
+User.belongsToMany(Role, { through: UserRoles});
 
 UserRoles.belongsTo(User, { foreignKey: 'updater' })
 UserRoles.belongsTo(User)
