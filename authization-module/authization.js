@@ -139,7 +139,7 @@ module.exports = {
 
     },
 
-    getFunctionalities
+    AuthizationRbac: require('./resources/authization-rbac').AuthizationRbac
 
 }
 

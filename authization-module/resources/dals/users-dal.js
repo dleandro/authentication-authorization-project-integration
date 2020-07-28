@@ -53,8 +53,8 @@ module.exports = {
      * @param password
      * @returns {Promise<void>}
      */
-    create: (username, password) => tryCatch(() => User.create({ username: username, password: password })),
-
+    create: async (username, password) => tryCatch(() =>
+        User.create({ username: username, password: password })),
 
     /**
      * update specific user's username
@@ -62,7 +62,11 @@ module.exports = {
      * @param id
      * @returns {Promise<void>}
      */
-    updateUsername: (username, id) => tryCatch(() => User.update({ username: username }, { where: { id: id } })),
+    updateUsername: async (username, id) => Promise.resolve(
+        {
+            insertedRows: await tryCatch(() => User.update({ username: username }, { where: { id: id } })),
+            username
+        }),
 
     /**
      * update specific user's password
@@ -79,7 +83,9 @@ module.exports = {
      */
     delete: (userId) => tryCatch(() => User.destroy({ where: { id: userId } })),
 
-    getUserRoles: (userId) => tryCatch(() => User.findAll({ where: { id: userId }, include: [Role], raw: true }))
+    getUserRoles: (userId) => tryCatch(() => User.findAll({ where: { id: userId }, include: [Role], raw: true })),
+
+    getUserHistory :(userId)=>tryCatch(() => UserHistory.findAll({ where: { user_id: userId }}))
 
 
 }

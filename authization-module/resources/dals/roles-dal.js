@@ -5,6 +5,9 @@ const {Role,UserRoles}= require('../sequelize-model'),
     config = require('../../common/config/config'),
     tryCatch = require('../../common/util/functions-utils')
 
+    const getSpecificById= (roleId) =>
+    tryCatch(() => Role.findByPk(roleId))
+
 module.exports = {
 
     /**
@@ -12,25 +15,32 @@ module.exports = {
          * @param role
          * @returns {Promise<void>}
          */
-    create: (role) =>
-        tryCatch(() => {
-            config.rbac.createRole(role, true)
-            return Role.findOrCreate({
-                where: {
-                    role: role
-                }
-            })
-        }),
+    create: async (role,parent_role) => tryCatch(async () => {
+        await config.rbac.createRole(role, true)
+        if(parent_role){
+            await config.rbac.grantByName((await getSpecificById(parent_role)).role,role)
+        }
+        return Role.findOrCreate({
+            defaults: { parent_role: parent_role},
+            where: {
+                role: role
+            }
+        })
+    }),
 
-    update: (id, role, parent_role) => tryCatch(() => Role.update({ role: role, parent_role: parent_role }, { where: { id: id } })),
+    update: async (id, role, parent_role) => Promise.resolve(
+        {
+            insertedRows: await tryCatch(() => Role.update({ role: role, parent_role: parent_role }, { where: { id: id } })),
+            role,
+            parent_role
+        }),
 
     /**
      *
      * @param roleId
      * @returns {Promise<*>}
      */
-    getSpecificById: (roleId) =>
-        tryCatch(() => Role.findByPk(roleId)),
+    getSpecificById,
 
     getByName: (roleName) => tryCatch(() => Role.findOne({ where: { role: roleName } })),
     /**
@@ -39,13 +49,15 @@ module.exports = {
      * @returns {Promise<void>}
      */
     delete: (roleId) =>
-        tryCatch(() => 
-            Role.destroy({
+        tryCatch(async () =>{
+            const role = await getSpecificById(roleId)
+            config.rbac.removeByName(role.role)
+            return Role.destroy({
                 where: {
                     id: roleId
                 }
             })
-        ),
+        }),
     /**
      *
      * @returns {Promise<void>}

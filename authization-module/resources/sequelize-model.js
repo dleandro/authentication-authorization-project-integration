@@ -83,7 +83,7 @@ User.beforeUpdate(setSaltHashAndPassword)
  * - description: DefaultString)
  * @type {Model}
  */
-const UserHistory = defineTable('User_History', { date: { type: DATE, allowNull: false }, description: STRING }, false);
+const UserHistory = defineTable('User_History', { date: { type: DATE, allowNull: false }, success: BOOLEAN,action:STRING,resource:STRING,from:STRING }, false);
 User.hasMany(UserHistory, { foreignKey: 'user_id' })
 
 /**

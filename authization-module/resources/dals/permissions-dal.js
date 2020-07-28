@@ -14,16 +14,15 @@ module.exports = {
   * @param description
   * @returns {Promise<void>}
   */
-    create: (action, resource) =>
-        tryCatch(() => {
-            config.rbac.createPermission(action, resource, true)
-            return Permission.findOrCreate({
-                where: {
-                    action: action,
-                    resource: resource
-                }
-            })
-        }),
+    create: async (action, resource) => tryCatch(async () => {
+        await config.rbac.createPermission(action, resource, true)
+        return Permission.findOrCreate({
+            where: {
+                action: action,
+                resource: resource
+            }
+        })
+    }),
 
     /**
      *
@@ -32,12 +31,14 @@ module.exports = {
      * @returns {Promise<void>}
      */
     delete: (id) =>
-        tryCatch(() =>
-            Permission.destroy({
+        tryCatch(async () =>{
+            const permission=await require('./permissions-dal').getSpecificById(id)
+            config.rbac.removeByName(permission.action + '_' + permission.resource)
+            return Permission.destroy({
                 where: {
                     id: id
                 }
-            })),
+            })}),
     /**
      *
      * @returns {Promise<void>}
@@ -65,7 +66,13 @@ module.exports = {
                 }
             })),
 
-    update: (id, action, resource) => tryCatch(() => Permission.update({ action: action, resource: resource }, { where: { id: id } })),
+    update: async (id, action, resource) => Promise.resolve(
+        {
+            insertedRows: await tryCatch(() => Permission.update({ action: action, resource: resource }, { where: { id: id } })),
+            action,
+            resource
+        }),
+
     getRolesByPermission: (id) => tryCatch(() => RolePermission.findAll({ where: { PermissionId: id }, include: [Role], raw: true }))
 
 }
