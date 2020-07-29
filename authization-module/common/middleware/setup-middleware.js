@@ -24,6 +24,6 @@ module.exports = function (app, session) {
     app.use((req,res,next)=>userHistory.saveHistory(req,res,next))
 
     //Interceptor that checks for authorization
-    app.use((req, res, next) => req.path.includes('api') ? authorization.check(req, res, next) : next());
+    //app.use((req, res, next) => req.path.includes('api') ? authorization.check(req, res, next) : next());
     
 };
