@@ -5,7 +5,7 @@ const
     { User } = require('../../../../resources/sequelize-model');
     module.exports = () => {
 
-        return new new LocalStrategy(
+        return new LocalStrategy(
     async function (username, password, done) {
         const user = await passportUtils.findCorrespondingUser(username);
 
