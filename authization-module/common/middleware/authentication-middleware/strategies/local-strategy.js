@@ -3,8 +3,9 @@ const
     LocalStrategy = require('passport-local').Strategy,
     passportUtils = require('../../../util/passport-utils'),
     { User } = require('../../../../resources/sequelize-model');
+    module.exports = () => {
 
-const strategy = new LocalStrategy(
+        return new new LocalStrategy(
     async function (username, password, done) {
         const user = await passportUtils.findCorrespondingUser(username);
 
@@ -19,5 +20,6 @@ const strategy = new LocalStrategy(
         }
     }
 );
+    
 
-module.exports = strategy;
+}
