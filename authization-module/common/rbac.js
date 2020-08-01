@@ -25,14 +25,7 @@ module.exports = async function (rbac_opts) {
     rolesPermissionsDal = require('../resources/dals/roles-permissions-dal'),
     usersRolesDal=require('../resources/dals/users-roles-dal')
 
-    
-/*const insertOnAdmin = async permission => {
-    const role=await roleDal.getByName('admin')
-    rolesPermissionsDal.create(role.id,permission.dataValues.id)
-}
 
-Permission.afterCreate(insertOnAdmin)
-*/
 
 
 const setGuestRole = async user => {
@@ -47,6 +40,14 @@ User.afterCreate(setGuestRole)
     if(rbac_opts){
          await createRoles(rbac_opts.roles)
          await setupSuperuser()
+         const admin=await roleDal.getByName('admin')
+    
+         const insertOnAdmin = async permission => {
+             rolesPermissionsDal.create(admin.id,permission.dataValues.id)
+         }
+         
+         Permission.afterCreate(insertOnAdmin)
+
          await createPermissions(rbac_opts.permissions)
         await createGrants(rbac_opts.grants)
     }else{

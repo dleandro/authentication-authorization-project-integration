@@ -10,7 +10,10 @@ const
 const sequelize = new Sequelize(config.database_opts.database, config.database_opts.user, config.database_opts.password, {
     host: config.database_opts.host,
     dialect: config.database_opts.sgbd,
-    query: { raw: true }
+    query: { raw: true },
+    dialectOptions:{
+            socketPath: config.database_opts.host
+    }
 })
 
 config.sequelize = sequelize

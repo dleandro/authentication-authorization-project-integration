@@ -41,7 +41,7 @@ module.exports = {
      */
     getSpecificById,
 
-    getByName: (roleName) => tryCatch(() => Role.findOne({ where: { role: roleName } })),
+    getByName: (roleName) => tryCatch(async () => await Role.findOne({ where: { role: roleName } })),
     /**
      *
      * @param roleId
