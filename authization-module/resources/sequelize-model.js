@@ -1,3 +1,5 @@
+
+
 const { Sequelize, DataTypes } = require('sequelize'),
     config = require('../common/config/config'),
     sequelize = config.sequelize,
@@ -73,6 +75,8 @@ const setSaltHashAndPassword = async user => {
     }
 }
 
+
+
 User.beforeCreate(setSaltHashAndPassword)
 User.beforeUpdate(setSaltHashAndPassword)
 
@@ -145,6 +149,11 @@ const Session = defineTable('Sessions', { sid: { type: STRING(36), primaryKey: t
 
 User.hasMany(Session)
 Session.belongsTo(User)
+
+
+
+
+
 
 exports.Permission = Permission
 exports.Protocols = Protocols

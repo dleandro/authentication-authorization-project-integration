@@ -6,8 +6,7 @@
 // this should be a superclass to the functionalities classes...
 
 const
-    config = require('./common/config/config'),
-    sequelizeErrorsMapper = require('./common/errors/sequelize-errors-mapper')
+    config = require('./common/config/config')
 
 const getFunctionalities = () => {
 
@@ -122,7 +121,9 @@ module.exports = {
                     store: sequelizeSessionStore,
                     secret: config.cookieSecret,
                     cookie: {
-                        maxAge: 1000 * 60 * 60 * 24
+                        maxAge: 1000 * 60 * 60 * 24,
+                        sameSite: "none",
+                        secure: true
                     }
                 }
 

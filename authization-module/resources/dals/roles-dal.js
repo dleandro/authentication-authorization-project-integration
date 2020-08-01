@@ -1,7 +1,6 @@
 'use strict'
 
-const {Role,UserRoles}= require('../sequelize-model'),
-    { Permission, User, RolePermission } = require('../sequelize-model'),
+    const {Role,UserRoles,Permission, User, RolePermission }= require('../sequelize-model'),
     config = require('../../common/config/config'),
     tryCatch = require('../../common/util/functions-utils')
 

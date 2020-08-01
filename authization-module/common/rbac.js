@@ -1,16 +1,16 @@
 const
     { RBAC } = require('rbac'),
     config = require('./config/config'),
-    { User, Role, UserRoles } = require('../resources/sequelize-model'),
+    { User, Role, UserRoles,Permission } = require('../resources/sequelize-model'),
     moment = require('moment');
-const rolesDal = require('../resources/dals/roles-dal');
 
 var
     roleDal,
     permissionsDal,
-    rolesPermissionsDal
+    rolesPermissionsDal,
+    usersRolesDal
 
-module.exports = async function (rbac_opts,bool) {
+module.exports = async function (rbac_opts) {
 
     if (config.isModuleSetUp) {
         return config.rbac;
@@ -22,27 +22,47 @@ module.exports = async function (rbac_opts,bool) {
     // variables are only initialized here because they need rbac to be placed on the config file before dal's are called
     roleDal = require('../resources/dals/roles-dal')
     permissionsDal = require('../resources/dals/permissions-dal')
-    rolesPermissionsDal = require('../resources/dals/roles-permissions-dal')
+    rolesPermissionsDal = require('../resources/dals/roles-permissions-dal'),
+    usersRolesDal=require('../resources/dals/users-roles-dal')
+
+    
+/*const insertOnAdmin = async permission => {
+    const role=await roleDal.getByName('admin')
+    rolesPermissionsDal.create(role.id,permission.dataValues.id)
+}
+
+Permission.afterCreate(insertOnAdmin)
+*/
 
 
-   /* const promiseArr = [
-        setupSuperuser(),
-        createRoles(rbac_opts.roles),
-        createPermissions(rbac_opts.permissions)
-    ]*/
+const setGuestRole = async user => {
+    const role= await roleDal.getByName('guest')
+    usersRolesDal.create(user.dataValues.id,role.id,new Date(),null,user.dataValues.id,1)
+    
+}
 
-    const promiseArr2=[
-        setupSuperuser(),
-        createRbacRoles(),
-        createRbacPermissions()
-    ]
+User.afterCreate(setGuestRole)
+
+
+    if(rbac_opts){
+         await createRoles(rbac_opts.roles)
+         await setupSuperuser()
+         await createPermissions(rbac_opts.permissions)
+        await createGrants(rbac_opts.grants)
+    }else{
+        const promiseArr2=[
+            setupSuperuser(),
+            createRbacRoles(),
+            createRbacPermissions()
+        ]
+        await Promise.all(promiseArr2)
+        await createRbacGrants()
+    }
 
     // Using promise.all to parallelize queries
     // we need to await this line below because we need 
     //the database to have all roles and permissions values before creating Grants
-    await Promise.all(bool?promiseArr:promiseArr2)
 
-    bool?await createGrants(rbac_opts.grants):await createRbacGrants()
 
     return Promise.resolve(rbac.init())
 }

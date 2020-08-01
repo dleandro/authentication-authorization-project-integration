@@ -31,7 +31,7 @@ module.exports = {
      */
     getAllFromUser: (userId) => tryCatch(() => UserHistory.findByPk(userId)),
 
-    saveHistory:(req,res,next)=>{
+    OLDsaveHistory:(req,res,next)=>{
         const resource = req.path.split("/")[2]
         const action = req.method
 
@@ -47,6 +47,11 @@ module.exports = {
             from:from
         })
     }
+        next()
+    },
+
+    saveHistory:(req,res,next)=>{
+        //TODO:create the saveHistory metho
         next()
     }
 
