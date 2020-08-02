@@ -122,7 +122,8 @@ module.exports = {
                     secret: config.cookieSecret,
                     cookie: {
                         maxAge: 1000 * 60 * 60 * 24,
-                        sameSite: 'strict'
+                        sameSite: 'strict',
+                        httpOnly: false
                     }
                 }
 
