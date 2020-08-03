@@ -6,7 +6,10 @@
 // this should be a superclass to the functionalities classes...
 
 const
-    config = require('./common/config/config')
+    config = require('./common/config/config'),
+    path = require('path')
+
+require('dotenv').config({ path: path.resolve(__dirname, './.env') })
 
 const getFunctionalities = () => {
 
@@ -122,7 +125,9 @@ module.exports = {
                     secret: config.cookieSecret,
                     cookie: {
                         maxAge: 1000 * 60 * 60 * 24,
-                        httpOnly: false
+                        httpOnly: process.env.production === 'true' ? false : true,
+                        secure: process.env.production === 'true' ? true : false,
+                        sameSite: process.env.production === 'true' ? 'none' : false
                     }
                 }
 

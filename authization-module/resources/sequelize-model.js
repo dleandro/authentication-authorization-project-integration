@@ -1,9 +1,11 @@
 
 
-const { Sequelize, DataTypes } = require('sequelize'),
+var cron = require('node-cron');
+const { Sequelize, DataTypes,Op } = require('sequelize'),
     config = require('../common/config/config'),
     sequelize = config.sequelize,
     bcrypt = require('bcrypt')
+   
 
 const { STRING, DATE, BOOLEAN, INTEGER, TEXT } = Sequelize
 
@@ -149,6 +151,13 @@ const Session = defineTable('Sessions', { sid: { type: STRING(36), primaryKey: t
 
 User.hasMany(Session)
 Session.belongsTo(User)
+
+ 
+cron.schedule('*/30 * * * *', () => {
+  console.log('running a task every minute');
+  UserRoles.update({ active: 0 }, { where: { end_date: {[Op.lt]:new Date() } }})
+  UserList.update({ active: 0 }, { where: { end_date: {[Op.lt]:new Date() } }})
+});
 
 
 
