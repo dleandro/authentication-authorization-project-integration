@@ -1,3 +1,5 @@
+
+
 const { Sequelize, DataTypes } = require('sequelize'),
     config = require('../common/config/config'),
     sequelize = config.sequelize,
@@ -42,6 +44,16 @@ const Role = defineTable('Role', { role: { type: STRING, allowNull: false, uniqu
  */
 Role.belongsToMany(Permission, { through: 'RolePermission', timestamps: false }, false);
 Permission.belongsToMany(Role, { through: 'RolePermission', timestamps: false }, false);
+
+const RolePermission = defineTable('RolePermission', { },false)
+RolePermission.removeAttribute('id');
+
+RolePermission.belongsTo(Role)
+Role.hasMany(RolePermission)
+
+RolePermission.belongsTo(Permission)
+Permission.hasMany(RolePermission)
+
 /**
  * User(
  * - username: NonNullString,
@@ -63,6 +75,8 @@ const setSaltHashAndPassword = async user => {
     }
 }
 
+
+
 User.beforeCreate(setSaltHashAndPassword)
 User.beforeUpdate(setSaltHashAndPassword)
 
@@ -73,7 +87,7 @@ User.beforeUpdate(setSaltHashAndPassword)
  * - description: DefaultString)
  * @type {Model}
  */
-const UserHistory = defineTable('User_History', { date: { type: DATE, allowNull: false }, description: STRING }, false);
+const UserHistory = defineTable('User_History', { date: { type: DATE, allowNull: false }, success: BOOLEAN,action:STRING,resource:STRING,from:STRING }, false);
 User.hasMany(UserHistory, { foreignKey: 'user_id' })
 
 /**
@@ -92,6 +106,14 @@ const UserAssociation = (associationName) => defineTable(associationName, {
 const UserList = UserAssociation('UserList');
 List.belongsToMany(User, { through: UserList });
 User.belongsToMany(List, { through: UserList });
+
+UserList.belongsTo(User, { foreignKey: 'updater' })
+UserList.belongsTo(User)
+User.hasMany(UserList)
+
+UserList.belongsTo(List)
+List.hasMany(UserList)
+
 /**
  * Idp(
  * - user_id: NonNullIntPK,
@@ -112,15 +134,26 @@ User.hasOne(Idp, { foreignKey: 'user_id' })
  * @type {Model}
  */
 
-// TODO: updater should be a foreign key
 const UserRoles = UserAssociation('UserRoles');
-Role.belongsToMany(User, { through: UserRoles });
-User.belongsToMany(Role, { through: UserRoles });
+Role.belongsToMany(User, { through: UserRoles});
+User.belongsToMany(Role, { through: UserRoles});
+
+UserRoles.belongsTo(User, { foreignKey: 'updater' })
+UserRoles.belongsTo(User)
+User.hasMany(UserRoles)
+
+UserRoles.belongsTo(Role)
+Role.hasMany(UserRoles)
 
 const Session = defineTable('Sessions', { sid: { type: STRING(36), primaryKey: true }, expires: DATE, data: TEXT }, true)
 
 User.hasMany(Session)
 Session.belongsTo(User)
+
+
+
+
+
 
 exports.Permission = Permission
 exports.Protocols = Protocols

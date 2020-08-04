@@ -5,7 +5,8 @@ const AzureAdOAuth2Strategy = require('passport-azure-ad-oauth2').Strategy,
     protocolName = 'AzureAD',
     jwt = require('jsonwebtoken');
 
-const strategy = new AzureAdOAuth2Strategy({
+    module.exports = () => {
+        return new AzureAdOAuth2Strategy({
         clientID: config.azureAD.azure_client_id,
         clientSecret: config.azureAD.azure_client_secret,
         callbackURL: config.azureAD.callbackUrl,
@@ -30,4 +31,4 @@ const strategy = new AzureAdOAuth2Strategy({
         }
     });
 
-module.exports = strategy;
+    }

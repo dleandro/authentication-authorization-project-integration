@@ -18,7 +18,7 @@ module.exports = {
      * @param active
      * @returns {Promise<void>}
      */
-    create: (user, role, startDate, endDate, updater, active) => tryCatch( () =>UserRole.create({
+    create: async (user, role, startDate, endDate, updater, active) => tryCatch(() => UserRole.create({
         UserId: user,
         RoleId: role,
         start_date: startDate,
@@ -36,7 +36,7 @@ module.exports = {
      * checks if all User roles are active
      * @returns {Promise<*>}
      */
-    getActive: tryCatch(() => UserRole.findAll({ where: { active: 1 } })),
+    getActive: () => tryCatch(UserRole.findAll({ where: { active: 1 } })),
     /**
      *
      * @param id
@@ -53,5 +53,17 @@ module.exports = {
      * @param id
      * @returns {Promise<void>}
      */
-    getById: (id) => tryCatch(() => UserRole.findByPk(id))
+    getById: (id) => tryCatch(() => UserRole.findByPk(id)),
+
+    getUserRoles: (userId) => tryCatch(() => UserRole.findAll({ where: { UserId: userId }, include: [Role], raw: true })),
+
+    delete: (UserId,RoleId) => tryCatch(() => UserRole.destroy({ where: { UserId: UserId,RoleId:RoleId } })),
+
+    update: async (user, role, endDate, active) => tryCatch(() => UserRole.update({ 
+        end_date: endDate,
+        active: active
+    },
+    {where:{UserId:user,RoleId:role}}))
+
+
 }

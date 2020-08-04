@@ -3,10 +3,14 @@ const
     LocalStrategy = require('passport-local').Strategy,
     passportUtils = require('../../../util/passport-utils'),
     { User } = require('../../../../resources/sequelize-model');
+    module.exports = () => {
 
-const strategy = new LocalStrategy(
+        return new LocalStrategy(
     async function (username, password, done) {
         const user = await passportUtils.findCorrespondingUser(username);
+        if (!user){
+            done(null, false, {message: 'User isnt in database'});
+        }
 
         if (await passportUtils.isBlackListed(user.id)) {
             passportUtils.addNotification(user.id);
@@ -19,5 +23,6 @@ const strategy = new LocalStrategy(
         }
     }
 );
+    
 
-module.exports = strategy;
+}
