@@ -16,12 +16,12 @@ module.exports = {
   */
     create: async (action, resource) => tryCatch(async () => {
         await config.rbac.createPermission(action, resource, true)
-        return Permission.findOrCreate({
+        return await (Permission.findOrCreate({
             where: {
                 action: action,
                 resource: resource
             }
-        })
+        }))[0]
     }),
 
     /**
@@ -73,6 +73,7 @@ module.exports = {
             resource
         }),
 
+        //TODO: change fields from jointed query
     getRolesByPermission: (id) => tryCatch(() => RolePermission.findAll({ where: { PermissionId: id }, include: [Role], raw: true }))
 
 }

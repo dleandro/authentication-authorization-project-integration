@@ -19,12 +19,12 @@ module.exports = {
         if(parent_role){
             await config.rbac.grantByName((await getSpecificById(parent_role)).role,role)
         }
-        return Role.findOrCreate({
+        return await (Role.findOrCreate({
             defaults: { parent_role: parent_role},
             where: {
                 role: role
             }
-        })
+        }))[0]
     }),
 
     update: async (id, role, parent_role) => Promise.resolve(
@@ -63,6 +63,7 @@ module.exports = {
      */
     get: () => tryCatch(() => Role.findAll({ raw: true })),
 
+    //TODO: change fields from jointed query
     getRolePermissions: (roleId) => tryCatch(() => Role.findAll({ where: { id: roleId }, include: [Permission], raw: true })),
 
     getUsersWithThisRole: (roleId) => tryCatch(() => UserRoles.findAll({ where: { RoleId: roleId }, include: [User], raw: true })),

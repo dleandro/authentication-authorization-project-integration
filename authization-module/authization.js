@@ -111,7 +111,7 @@ module.exports = {
                 };
             }
 
-            console.log(config.env)
+            console.log(config.env === 'production')
 
             const
                 SessionStore = require('connect-session-sequelize')(expressSession.Store),

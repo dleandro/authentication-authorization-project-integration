@@ -85,6 +85,7 @@ module.exports = {
             list
         }),
 
+    //TODO: change fields from jointed query
     getUsersInThisList: (id) => tryCatch(() => UserList.findAll({ where: { ListId: id }, include: [User], raw: true })),
 
     isUserBlackListed: (userId) =>
