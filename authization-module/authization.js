@@ -127,10 +127,7 @@ module.exports = {
                     store: sequelizeSessionStore,
                     secret: config.cookieSecret,
                     cookie: {
-                        maxAge: 1000 * 60 * 60 * 24,
-                        httpOnly: config.env === 'production' ? false : true,
-                        secure: config.env === 'production' ? true : false,
-                        sameSite: config.env === 'production' ? 'none' : false
+                        maxAge: 1000 * 60 * 60 * 24
                     }
                 }
 
