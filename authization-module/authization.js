@@ -113,6 +113,8 @@ module.exports = {
 
             console.log(config.env === 'production')
 
+	app.set('trust proxy', 1) 
+
             const
                 SessionStore = require('connect-session-sequelize')(expressSession.Store),
                 sequelizeSessionStore = new SessionStore({
