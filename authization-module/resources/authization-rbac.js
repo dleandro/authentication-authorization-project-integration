@@ -7,25 +7,25 @@ module.exports = class AuthizationRbac {
     }
 
     init() {
-        this.rbac = new RBAC(this.rbac_opts) 
+        this.rbac = new RBAC(this.rbac_opts)
 
         const rbac_options = this.rbac.options
-        if(Array.isArray(rbac_options.roles) && typeof(rbac_options.permissions) === 'object' && typeof(rbac_options.grants) === 'object') {
+        if (Array.isArray(rbac_options.roles) && typeof (rbac_options.permissions) === 'object' && typeof (rbac_options.grants) === 'object') {
             return this.rbac.init()
         }
         throw Error("rbac options sent to the constructor were invalid")
     }
-
-    can(roleName, action, resource) {
-        return this.rbac.can(roleName, action, resource)
+    
+    can(rolesNames, action, resource) {
+        return rolesNames.some(role => this.rbac.can(role, action, resource))
     }
 
-    canAll(roleName, permissions) {
-        return this.rbac.canAll(roleName, permissions)
+    canAll(rolesNames, permissions) {
+        return rolesNames.some(role => this.rbac.canAll(role, permissions))
     }
 
-    canAny(roleName, permissions) {
-        return this.rbac.canAny(roleName, permissions)
+    canAny(rolesNames, permissions) {
+        return rolesNames.some(role => this.rbac.canAny(role, permissions))
     }
 
 }
