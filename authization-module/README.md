@@ -98,4 +98,4 @@ const userHistory = require('@authization/authization').userHistory
 userHistory.getAll()
 ```
 
-[Read our Documentation!](https://github.com/dleandro/Authentication-and-Authorization-Node-Component-/blob/master/authization-module/reports%26docs/dals-documentation/docs/index.html)
+[Read our Documentation!](https://dleandro.github.io/authentication-authorization-project-integration/)
