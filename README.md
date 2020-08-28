@@ -1,5 +1,18 @@
-﻿# authentication-authorization-project-integration
+# Authization
+Authization is a Passport based module, built to handle authentication and authorization by you in your express app.
 
+***Auth***entication + Author**ization** = **Authization**
+
+Currently we support OpenId and SAML protocols with Idps from Azure(Office 365) and Google.
+Authization builds you a User management model based on the RBAC method that allows you to:
+ - Creation, deletion and editing user’s username and password;  
+ - Management of roles;  
+ - Management of permissions;   
+ - Binding permissions to roles.;  
+ - Association of users to roles;  
+ - Blacklist management;  
+ - Storage of user’s history;  
+ - Management of user sessions.
 
 [Check out our Documentation for more information on available methods!](https://dleandro.github.io/authentication-authorization-project-integration/)
 ## Using our module
