@@ -16,7 +16,15 @@
     "issuer": "51ca8d6f-0e88-4e3c-9e49-ae2920ef2c46",
     "certificate":""
   },
-  "database_opts": {},
+  "database_opts": {
+    "host": "eporqep6b4b8ql12.chr7pe7iynqr.eu-west-1.rds.amazonaws.com",
+    "port": 3306,
+    "user": "jvp56pl2nbv1v9pw",
+    "password": "pv9t6oy23bsv65ri",
+    "connectionLimit": 5,
+    "database": "r15dtqer5c72jvex",
+    "dbms": "mariadb"
+  },
   "rbac": {},
   "webAppUri": "http://localhost:3000",
   "isModuleSetUp": false,

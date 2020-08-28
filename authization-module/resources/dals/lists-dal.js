@@ -1,51 +1,39 @@
 'use strict'
 
 const
-    { List, User, UserList } = require('../sequelize-model'),
-    tryCatch = require('../../common/util/functions-utils')
+    { List } = require('../sequelize-model'),
+    tryCatch = require('../../common/util/functions-utils');
 
 // TODO: should a user be in more than one list?? if not we need to controll that
+// JUSTIFICATION: Probably should because being in the greylist and in the redlist even if they block completely different resources is still better than being in the blacklist
 // the same with user roles
-
+/**
+ * @module
+ */
 module.exports = {
 
 
     /**
      * Creates a list entry with a user_id associated and a type of list
-     * @param userId
-     * @param list
-     * @param startDate
-     * @param endDate
-     * @param updater
-     * @param active
+     * @param {string} list
      * @returns {Promise<CustomError>}
      */
-    create: async (list) => tryCatch(() =>
-        List.create({
-            list: list
-        })
-    ),
+    create: list => tryCatch(() =>List.create({list})),
 
 
     /**
-     * deactivates active list, it only deactivates because we don't wanna change inactive list's status for history purposes
-     * @param listId
+     * Puts the active BIT to 0 of a list with id=listId, deactivates active list, it only deactivates because we don't wanna change inactive list's status for history purposes
+     * @param {int} listId
      * @returns {*}
      */
-    deactivate: (listId) =>
-        tryCatch(
-            () => List.update({ active: 0 }, { where: { id: listId } })
-        ),
+    deactivate: listId => tryCatch(() => List.update({ active: 0 }, { where: { id: listId } })),
 
     /**
-     * deletes the user association to a list
-     * @param listId
+     * Deletes a list by its id
+     * @param {int} id
      * @returns {*}
      */
-    delete: (listId) =>
-        tryCatch(
-            () => List.destroy({ where: { id: listId } })
-        ),
+    delete: id => tryCatch(async () =>Promise.resolve({deletedRows: await List.destroy({ where: { id } })})),
 
     /**
      * asks the database for all list entries
@@ -56,46 +44,27 @@ module.exports = {
      */
     get: () => tryCatch(() => List.findAll({ raw: true })),
 
-    getById: (id) => tryCatch(() => List.findByPk(id)),
+    /**
+     * Returns the list with the specified id
+     * @param {int} id
+     * @returns {Promise<Object|Error>}
+     */
+    getById: id => tryCatch(() => List.findByPk(id)),
 
     /**
+     * Returns all lists with active BIT to 1,
      * asks the database for all list entries that are active at the moment
      * @returns {PromiseLike<function(*=): *> | Promise<function(*=): *>}
      */
     getActive: () => tryCatch(() => List.findAll({ where: { active: 1 } })),
 
-    /**
-    * asks the database for all list entries that are active and associated with a specific user
-    * @param userId
-    * @returns {Promise<{end_date: *, active, id, list: *, user: *, start_date: *, updater}>}
-    */
-    getUsersLists: (userId) =>
-        tryCatch(() =>
-            UserList.findAll({
-                where: {
-                    UserId: userId
-                }
-            })
-        ),
-
     // update query doesn't return the updated resource for some reason
-    update: async (id, list) => Promise.resolve(
-        {
-            insertedRows: await tryCatch(() => List.update({ list: list }, { where: { id: id } })),
-            list
-        }),
+    /**
+     * Changes the list name (field: list) of a list with id=id
+     * @param {int} id
+     * @param {string} list
+     * @returns {Promise<{insertedRows: *, id: *, list: *}>}
+     */
+    update: async (id, list) => Promise.resolve({insertedRows: await tryCatch(() => List.update({list}, { where: {id} })), list, id}),
 
-    //TODO: change fields from jointed query
-    getUsersInThisList: (id) => tryCatch(() => UserList.findAll({ where: { ListId: id }, include: [User], raw: true })),
-
-    isUserBlackListed: (userId) =>
-        tryCatch(() =>
-            List.findAll({
-                where: {
-                    list: 'BLACK',
-                    active: 1,
-                    user_id: userId
-                }
-            })
-        )
 }

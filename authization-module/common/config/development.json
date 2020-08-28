@@ -7,7 +7,7 @@
   "azureAD": {
     "azure_client_id": "39d62b3c-b736-4e13-b71e-37926569e5dc",
     "azure_client_secret": "8i4IoQXtI-UbSc5wz4LtrO:=M:UrkTH=",
-    "callbackUrl": "https://webapi-dot-auth-authorization.ew.r.appspot.com/api/authentications/azureAD/callback",
+    "callbackUrl": "http://localhost:8080/api/authentications/azureAD/callback",
     "tenant": "bb367ab9-9da9-455e-b938-fd65cd29f5ae"
   },
   "saml": {

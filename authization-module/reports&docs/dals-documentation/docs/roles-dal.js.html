@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: roles-dal.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: roles-dal.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const {Role, Permission, Op} = require('../sequelize-model'),
+    {rbac} = require('../../common/config/config'),
+    tryCatch = require('../../common/util/functions-utils');
+
+const getSpecificById = roleId => tryCatch(() => Role.findByPk(roleId));
+
+/**
+ * @module
+ */
+module.exports = {
+
+    /**
+     * Creates a new role with a possible role Hierarchy, if the role already exists returns the existing one.
+     * @param {string} role
+     * @returns {Promise&lt;void>}
+     */
+    create: async (role, parent_role) => tryCatch(async () => {
+        await rbac.createRole(role, true);
+        if (parent_role) {
+            await rbac.grantByName((await getSpecificById(parent_role)).role, role);
+        }
+        return (await Role.findOrCreate({defaults: {parent_role}, where: {role}}))[0];
+    }),
+    /**
+     * Changes the parent role of the Role specified by the id, the parent_role parameter should be an object containing a field label which contains the name of the parent role
+     * and field value which contains the id of the parent role. Ex: role.update(3,{label:'admin',value:1});
+     * @param {int} id
+     * @param {int} parent_role
+     * @returns {Promise&lt;{insertedRows: (Object|Error), parent_role: *}>}
+     */
+    update: async (id, parent_role) => {
+        const rbacRole = getSpecificById(id).then(({role})=>rbac.getRole(role));
+        rbac.grant(await rbac.getRole(parent_role.label), await rbacRole);
+        return Promise.resolve({insertedRows: await tryCatch(() => Role.update({parent_role: parent_role.value}, {where: {id}})), parent_role});
+    },
+
+
+    /**
+     * Returns a specific role by its id
+     * @param {int} roleId
+     * @returns {Promise&lt;*>}
+     */
+    getSpecificById,
+
+    /**
+     * Returns all roles that own a parent_role
+     * @returns {Promise&lt;Object|Error>}
+     */
+    getWithParents: () => tryCatch(() => Role.findAll({where: {parent_role: {[Op.ne]: null}}})),
+
+    /**
+     *  Returns a role by its name
+     * @param {string} roleName
+     * @returns {Promise&lt;Object|Error>}
+     */
+    getByName: roleName => tryCatch(() => Role.findOne({where: {role: roleName}})),
+    /**
+     * Delete a specific role by its roleId
+     * @param {int} roleId
+     * @returns {Promise&lt;void>}
+     */
+    delete: async roleId =>
+        tryCatch(async () => {
+            await getSpecificById(roleId).then(({role})=>rbac.removeByName(role));
+            return Promise.resolve({deletedRows: await Role.destroy({where: {id: roleId}})});
+        }),
+    /**
+     * Returns all roles
+     * @returns {Promise&lt;void>}
+     */
+    get: () => tryCatch(() => Role.findAll({raw: true})),
+    /**
+     * Changes the parent role of the given Role, the parentRole parameter should be an object containing a field role which contains the name of the parent role and field id
+     * which contains the id of the parent role, the parameter role should be an object containing a field role with the role name and a field id with the role's id.
+     * Ex: role.addParentRole({role:'develloper',id:3},{role:'admin',id:1});
+     * @param {string} role
+     * @param {int} parentRole
+     * @returns {Promise&lt;Object|Error>}
+     */
+    addParentRole: (role, parentRole) => tryCatch(async () => {
+        rbac.grant(await rbac.getRole(parentRole.role), await rbac.getRole(role.role));
+        return Role.update({parent_role: parentRole.id}, {where: {id: role.id,}});
+    }),
+
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authentication-types-dal.html">authentication-types-dal</a></li><li><a href="module-idps-dal.html">idps-dal</a></li><li><a href="module-lists-dal.html">lists-dal</a></li><li><a href="module-permissions-dal.html">permissions-dal</a></li><li><a href="module-roles-dal.html">roles-dal</a></li><li><a href="module-roles-permissions-dal.html">roles-permissions-dal</a></li><li><a href="module-user-list-dal.html">user-list-dal</a></li><li><a href="module-user-session-dal.html">user-session-dal</a></li><li><a href="module-users-dal.html">users-dal</a></li><li><a href="module-users-history-dal.html">users-history-dal</a></li><li><a href="module-users-roles-dal.html">users-roles-dal</a></li></ul><h3>Classes</h3><ul><li><a href="module-users-history-dal.OLDsaveHistory.html">OLDsaveHistory</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getById">getById</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Fri Aug 28 2020 13:52:05 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
