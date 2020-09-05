@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: users-roles-dal.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: users-roles-dal.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const
+    { Role, User, UserRoles } = require('../sequelize-model'),
+    tryCatch = require('../../common/util/functions-utils');
+
+/**
+ * @module
+ */
+module.exports = {
+
+    /**
+     * Associate a user with a role, the parameters user and role represent the user id and the role id, the endDate determines when the association between
+     * that role and that user will expire and the active bit will turn into 0.
+     * @param {int} user
+     * @param {int} role
+     * @param {Date} startDate
+     * @param {Date} end_date
+     * @param {int} updater
+     * @param {int} active
+     * @returns {Promise&lt;void>}
+     */
+    create: async (user, role, startDate, end_date, updater, active) => tryCatch(() =>
+        UserRoles.create({UserId: user, RoleId: role, start_date: startDate, end_date, updater, active})),
+    /**
+     * Changes the active bit of the association between the user UserId and the role RoleId, according to the provided newState
+     * @returns {Promise&lt;void>}
+     * @param {int} UserId
+     * @param {int} RoleId
+     * @param {int} newState
+     */
+    changeActiveFlag: (UserId, RoleId, newState) => tryCatch(() => UserRoles.update({ active: newState }, { where: { UserId, RoleId } })),
+    /**
+     * Returns all the associations that have the active bit to 1
+     * @returns {Promise&lt;*>}
+     */
+    getActive: () => tryCatch(UserRoles.findAll({ where: { active: 1 } })),
+    /**
+     * Returns all the associations that have the active bit to 1 of a specific user
+     * @param {int} id
+     * @returns {Promise&lt;*>}
+     */
+    getUserActiveRoles: id => tryCatch(() => UserRoles.findAll({ where: { UserId: id, active: 1 }, include: [Role], raw: true  })),
+    /**
+     * Return all associations between user and role of the role with the id=roleId.
+     * @param {int} RoleId
+     * @returns {Promise&lt;Object|Error>}
+     */
+    getByRole: RoleId => tryCatch(() => UserRoles.findAll({ where: { RoleId}, include: [User], raw: true })),
+
+    /**
+     * Returns all the associations
+     * @returns {Promise&lt;void>}
+     */
+    get: () => tryCatch(() => UserRoles.findAll({ raw: true })),
+    /**
+     * Return a specific association by its id
+     * @param {int} id
+     * @returns {Promise&lt;void>}
+     */
+    getById: id => tryCatch(() => UserRoles.findByPk(id)),
+    /**
+     * Return all associations between user and role of the user with the id=userId.
+     * @param {int} userId
+     * @returns {Promise&lt;Object|Error>}
+     */
+    getByUser: userId => tryCatch(async () => {
+        const users = await UserRoles.findAll({ where: { UserId: userId }, include: [Role], raw: true });
+        return users.map(user => {
+            const {'Role.role': role, 'Role.parent_role': parentRole,'Role.id': unused, ...rest}=user;
+            return {role,parentRole,...rest};
+        });
+    }),
+    /**
+     * Deletes the association between the user with UserId and the role with RoleId.
+     * @param {int} UserId
+     * @param {int} RoleId
+     * @returns {Promise&lt;{deletedRows: Promise&lt;Object|Error>}>}
+     */
+    delete: (UserId, RoleId) => Promise.resolve({deletedRows: tryCatch(() => UserRoles.destroy({ where: {UserId, RoleId},individualHooks: true }))}),
+    /**
+     * Changes the start_date, endDate, active and updater of the association between the user with id=user and the role with id=role.
+     * @param {int} user
+     * @param {int} role
+     * @param {Date} start_date
+     * @param {Date} end_date
+     * @param {int} active
+     * @param {int} updater
+     * @returns {Promise&lt;{end_date: *, active: *, updatedRows: (Object|Error), updater: *}>}
+     */
+    update: async (user, role, start_date, end_date, active,updater) => Promise.resolve({
+        updatedRows:
+            await tryCatch(() => UserRoles.update({start_date, end_date, active, updater}, { where: { UserId: user, RoleId: role } })),
+        end_date, active, updater,
+    }),
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authentication-types-dal.html">authentication-types-dal</a></li><li><a href="module-idps-dal.html">idps-dal</a></li><li><a href="module-lists-dal.html">lists-dal</a></li><li><a href="module-permissions-dal.html">permissions-dal</a></li><li><a href="module-roles-dal.html">roles-dal</a></li><li><a href="module-roles-permissions-dal.html">roles-permissions-dal</a></li><li><a href="module-user-list-dal.html">user-list-dal</a></li><li><a href="module-user-session-dal.html">user-session-dal</a></li><li><a href="module-users-dal.html">users-dal</a></li><li><a href="module-users-history-dal.html">users-history-dal</a></li><li><a href="module-users-roles-dal.html">users-roles-dal</a></li></ul><h3>Classes</h3><ul><li><a href="module-users-history-dal.OLDsaveHistory.html">OLDsaveHistory</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getById">getById</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Fri Aug 28 2020 13:52:05 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
