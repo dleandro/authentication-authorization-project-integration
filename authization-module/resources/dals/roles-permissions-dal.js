@@ -24,6 +24,8 @@ module.exports = {
             return (await RolePermission.findOrCreate({where: {RoleId, PermissionId: id}}))[0];
         }),
 
+    //TODO
+    createMultiple: rolePermissionArray => tryCatch(() => RolePermission.bulkCreate(rolePermissionArray)),
     /**
      * Delete the association between a role and a permission
      * @returns {Promise<void>}

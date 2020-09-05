@@ -2,8 +2,15 @@
 
 const { Sequelize,Op} = require('sequelize'),
     config = require('../common/config/config'),
-    sequelize = config.sequelize,
     bcrypt = require('bcrypt');
+
+//For testing purposes we need to generate a new Sequelize here if config doesnt already own one
+const {database, dbms, host, password, user} = config.database_opts;
+let dbInfo ={host, dialect: dbms, query: {raw: true}};
+if (process.env.INSTANCE_CONNECTION_NAME) {
+    dbInfo = {...dbInfo,host: process.env.INSTANCE_CONNECTION_NAME,dialectOptions: {socketPath: process.env.INSTANCE_CONNECTION_NAME}};
+}
+const sequelize = config.sequelize || new Sequelize(database, user, password,dbInfo);
 
 const { STRING, DATE, BOOLEAN, INTEGER, TEXT} = Sequelize;
 
@@ -250,10 +257,10 @@ User.afterBulkUpdate(updateUserHistory);
 
 
 const cron = require('node-cron');
-cron.schedule('*/2 * * * *', async () => {
-    console.log('running a task every 1 minute');
-    await UserRoles.update({ active: 0 }, { where: {end_date:{[Op.lt] : new Date()},active:1 }});
-    await UserList.update({ active: 0 }, { where: {end_date:{[Op.lt] : new Date()},active:1 }});
+cron.schedule('*/5 * * * *', async () => {
+    console.log('running a task every 5 minute');
+    await UserRoles.update({ active: false }, { where: {end_date:{[Op.lt] : new Date()},active:true }});
+    await UserList.update({ active: false }, { where: {end_date:{[Op.lt] : new Date()},active:true }});
   });
 
 

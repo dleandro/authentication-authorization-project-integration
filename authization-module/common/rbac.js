@@ -27,7 +27,7 @@ module.exports = async function (rbacOpts) {
     usersRolesDal = require('../resources/dals/users-roles-dal');
 
     const setBasicRoles = async user => {
-        const {id} = await roleDal.getByName('Colaborator');
+        const { id } = await roleDal.getByName('Colaborator');
         usersRolesDal.create(user.dataValues.id, id, new Date(), null, user.dataValues.id, 1);
     };
 
@@ -39,21 +39,15 @@ module.exports = async function (rbacOpts) {
         await setupSuperuser();
         const admin = await roleDal.getByName('admin');
 
-        const insertOnAdmin = async permission => {
-            rolesPermissionsDal.create(admin.id, permission.dataValues.id);
-        };
-
-        Permission.afterCreate(insertOnAdmin);
-
-        await createPermissions(rbacOpts.permissions);
+        await createPermissions(admin.id,rbacOpts.permissions);
         await createGrants(rbacOpts.grants);
     } else {
-        const promiseArr2 = [
+        const promiseArrToSolve = [
             setupSuperuser(),
             createRbacRoles(),
             createRbacPermissions()];
 
-        await Promise.all(promiseArr2);
+        await Promise.all(promiseArrToSolve);
         await createRbacGrants();
         await createParentGrants();
     }
@@ -66,12 +60,15 @@ module.exports = async function (rbacOpts) {
     return Promise.resolve(rbac.init());
 };
 
-const createRoles= roles=>Promise.all(roles.map(role => roleDal.create(role)));
+const createRoles = roles => Promise.all(roles.map(role => roleDal.create(role)));
 
-const createPermissions= permissions=> Promise.all(permissions.map(permission => permissionsDal.create(permission.action, permission.resource)));
+const createPermissions = (adminId, permissions) => Promise.all(permissions.map(async permission => {
+    const createdPermission = await permissionsDal.create(permission.action, permission.resource)
+    return rolesPermissionsDal.create(adminId, createdPermission.id)
+}));
 
 const createRbacPermissions = () => permissionsDal.get()
-    .then(permissions=> permissions.map(({action, resource}) => config.rbac.createPermission(action, resource, true)));
+    .then(permissions => permissions.map(({ action, resource }) => config.rbac.createPermission(action, resource, true)));
 
 const createGrants = grants => Promise.all(Object.keys(grants).map(key =>
     roleDal.getByName(key)
@@ -79,12 +76,12 @@ const createGrants = grants => Promise.all(Object.keys(grants).map(key =>
             grants[key].map(permission =>
                 ('role' in permission) ?
                     roleDal.getByName(permission.role).then(childRole => roleDal.addParentRole(childRole, role)) :
-                    permissionsDal.getSpecific(permission.action, permission.resource).then(({id}) => rolesPermissionsDal.create(role.id, id))))
+                    permissionsDal.getSpecific(permission.action, permission.resource).then(({ id }) => rolesPermissionsDal.create(role.id, id))))
 ));
 
-const createRbacGrants= async ()=> {
+const createRbacGrants = async () => {
     const rolepermissions = await rolesPermissionsDal.get();
-    return Promise.all(rolepermissions.map(async ({action, resource, role}) => {
+    return Promise.all(rolepermissions.map(async ({ action, resource, role }) => {
         const fetchedRole = await config.rbac.getRole(role);
         const permission = await config.rbac.getPermission(action, resource);
         config.rbac.grant(fetchedRole, permission);
@@ -96,25 +93,25 @@ const setupSuperuser = async () => {
     // this should use our own dals to make sure rbac object is always consistent with our database
     const role = Role.findOrCreate({ where: { "role": "admin" } });
     Role.findOrCreate({ where: { "role": "guest" } });
-    Role.findOrCreate({where:{"role":"Colaborator"}})
-    const [{id}] = await User.findOrCreate({where: {"username": "superuser"}, defaults: {"password": "Superuser123"}});
+    Role.findOrCreate({ where: { "role": "Colaborator" } })
+    const [{ id }] = await User.findOrCreate({ where: { "username": "superuser" }, defaults: { "password": "Superuser123" } });
     return UserRoles.findOrCreate({
         where: { "UserId": id, "RoleId": (await role)[0].id },
-        defaults: { "updater": id, "active": 1, "start_date": moment().format() }});
+        defaults: { "updater": id, "active": true, "start_date": moment().format() }});
 };
 
 
 
 const createRbacRoles = async () => {
-    const rolesNames = roleDal.get().then(roles=>roles.map(role => role.role));
+    const rolesNames = roleDal.get().then(roles => roles.map(role => role.role));
     config.rbac.createRoles(await rolesNames, true);
 };
 
 
 const createParentGrants = async () => {
-    const {getRole, grant} = config.rbac;
-    const roles=await roleDal.getWithParents();
-    return Promise.all(roles.map(async ({parent_role, role})=>
+    const { getRole, grant } = config.rbac;
+    const roles = await roleDal.getWithParents();
+    return Promise.all(roles.map(async ({ parent_role, role }) =>
         roleDal.getSpecificById(parent_role)
-            .then(async parentRole=>grant(await getRole(parentRole.role),await getRole(role)))));
+            .then(async parentRole => grant(await getRole(parentRole.role), await getRole(role)))));
 };

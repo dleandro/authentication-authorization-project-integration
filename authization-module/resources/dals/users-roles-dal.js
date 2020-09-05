@@ -20,6 +20,8 @@ module.exports = {
      */
     create: async (user, role, startDate, end_date, updater, active) => tryCatch(() =>
         UserRoles.create({UserId: user, RoleId: role, start_date: startDate, end_date, updater, active})),
+
+    createMultiple: userRolesArray => tryCatch(() =>UserRoles.bulkCreate(userRolesArray)),
     /**
      * Changes the active bit of the association between the user UserId and the role RoleId, according to the provided newState
      * @returns {Promise<void>}
@@ -32,13 +34,13 @@ module.exports = {
      * Returns all the associations that have the active bit to 1
      * @returns {Promise<*>}
      */
-    getActive: () => tryCatch(UserRoles.findAll({ where: { active: 1 } })),
+    getActive: () => tryCatch(UserRoles.findAll({ where: { active: true } })),
     /**
      * Returns all the associations that have the active bit to 1 of a specific user
      * @param {int} id
      * @returns {Promise<*>}
      */
-    getUserActiveRoles: id => tryCatch(() => UserRoles.findAll({ where: { UserId: id, active: 1 }, include: [Role], raw: true  })),
+    getUserActiveRoles: id => tryCatch(() => UserRoles.findAll({ where: { UserId: id, active: true }, include: [Role], raw: true  })),
     /**
      * Return all associations between user and role of the role with the id=roleId.
      * @param {int} RoleId
@@ -86,9 +88,14 @@ module.exports = {
      * @param {int} updater
      * @returns {Promise<{end_date: *, active: *, updatedRows: (Object|Error), updater: *}>}
      */
-    update: async (user, role, start_date, end_date, active,updater) => Promise.resolve({
+    update: async (UserId, RoleId, start_date, end_date, active,updater) => Promise.resolve({
         updatedRows:
-            await tryCatch(() => UserRoles.update({start_date, end_date, active, updater}, { where: { UserId: user, RoleId: role } })),
-        end_date, active, updater,
+            await tryCatch(() => UserRoles.update({start_date, end_date, active, updater}, { where: { UserId: UserId, RoleId: RoleId } })),
+            UserId,
+            RoleId,
+            start_date,
+            end_date,
+            active,
+            updater
     }),
 };

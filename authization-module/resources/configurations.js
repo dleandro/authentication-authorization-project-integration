@@ -11,12 +11,12 @@ module.exports = {
      * @param newConfiguration
      */
     changeGoogleAuthenticationOptions: newConfiguration => {
-        newConfiguration.google_opts.callbackUrl=config.google.callbackUrl;
-        config.google = newConfiguration.google_opts;
+        newConfiguration.callbackUrl=config.google_oauth2.callbackUrl;
+        config.google_oauth2 = newConfiguration
 
-        delete passport._strategies.google;
+        delete passport._strategies.google_oauth2;
 
-        const strat = require('../common/middleware/authentication-middleware/strategies/google-strategy')();
+        const strat = require('../common/middleware/authentication-middleware/strategies/google-strat')();
 
         passport.use('google', strat);
     },
@@ -25,23 +25,23 @@ module.exports = {
      * @param newConfiguration
      */
     changeAzureADAuthenticationOptions: newConfiguration => {
-        newConfiguration.azure_opts.callbackUrl=config.azureAD.callbackUrl;
-        config.azureAD = newConfiguration.azure_opts;
+        newConfiguration.callbackUrl=config.office365_oauth2.callbackUrl;
+        config.office365_oauth2 = newConfiguration;
 
-        delete passport._strategies.azure_ad_oauth2;
+        delete passport._strategies.office365_oauth2;
 
-        const strat = require('../common/middleware/authentication-middleware/strategies/azure-ad-oauth2-strategy')();
+        const strat = require('../common/middleware/authentication-middleware/strategies/azure-strat')();
 
         passport.use('azure_ad_oauth2', strat);
     },
 
     changeSamlAuthenticationOptions: newConfiguration => {
-        newConfiguration.saml_opts.callbackUrl=config.saml.callbackUrl;
-        config.saml = newConfiguration.saml_opts;
+        newConfiguration.callbackUrl=config.office365_saml.callbackUrl;
+        config.office365_saml = newConfiguration;
 
-        delete passport._strategies.saml;
+        delete passport._strategies.office365_saml;
 
-        const strat = require('../common/middleware/authentication-middleware/strategies/saml-strategy')();
+        const strat = require('../common/middleware/authentication-middleware/strategies/saml-strat')();
 
         passport.use('saml', strat);
     },
@@ -79,10 +79,10 @@ module.exports = {
         return { roles, permissions: formattedPermissions, grants: formattedGrants };
     },
 
-    getGoogleOptions:async () => getIdpOptions('google'),
+    getGoogleOptions:async () => getIdpOptions('google_oauth2'),
 
-    getAzureAdOptions:async () => getIdpOptions('azureAD'),
+    getAzureAdOptions:async () => getIdpOptions('office365_oauth2'),
 
-    getSamlOptions:async () => getIdpOptions('saml'),
+    getSamlOptions:async () => getIdpOptions('office365_saml'),
 
 };

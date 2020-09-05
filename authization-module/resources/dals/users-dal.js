@@ -70,6 +70,8 @@ module.exports = {
      */
     create: (username, password, updater) => tryCatch(() => User.create({username, password, updater})),
 
+    createMultiple: userArray => tryCatch(() =>User.bulkCreate(userArray)),
+
     /**
      * This method updates the username of a user by its id, the user which is making the update should be sent in the parameter updater
      * @param {string} username

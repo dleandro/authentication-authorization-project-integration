@@ -18,6 +18,9 @@ module.exports = {
         .then(()=>Permission.findOrCreate({where: {action,resource}}))
         .then(perm=>perm[0])),
 
+    //TODO: Needs testing
+    createMultiple: permissionsArray => tryCatch(() => rbac.createPermissions(permissionsArray,true).then(()=>Permission.bulkCreate(permissionsArray))),
+
     /**
      * Deletes the Permission through the given id
      * @returns {Promise<void>}

@@ -21,6 +21,15 @@ module.exports = {
         }
         return (await Role.findOrCreate({defaults: {parent_role}, where: {role}}))[0];
     }),
+
+    //TODO:Needs testing
+    createMultiple: roleArray => tryCatch(async () =>{
+        const rolenames=roleArray.map(role=>role.role);
+        await rbac.createRoles(rolenames,true);
+        const rbacRoles= await Promise.all(roleArray.filter(role=>role.parent_role!==undefined).map(role=>rbac.getRole(role.role)));
+        await rbac.grants(rbacRoles);
+        return Role.bulkCreate(roleArray);
+    }),
     /**
      * Changes the parent role of the Role specified by the id, the parent_role parameter should be an object containing a field label which contains the name of the parent role
      * and field value which contains the id of the parent role. Ex: role.update(3,{label:'admin',value:1});

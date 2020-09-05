@@ -16,7 +16,7 @@ module.exports = {
      * Returns all active authentication types.
      * @returns {Promise<Object|Error>}
      */
-    getActive: () => tryCatch(() => AuthenticationTypes.findAll({ where: { active: 1 } })),
+    getActive: () => tryCatch(() => AuthenticationTypes.findAll({ where: { active: true } })),
     /**
      * Changes the active bit of the specified authentication
      * @param {string} protocol
@@ -31,6 +31,6 @@ module.exports = {
      * @param {string} idp
      * @returns {*}
      */
-    getByName: (protocol,idp)=> AuthenticationTypes.findAll({where:{protocol, idp, active:1}}),
+    getByName: (protocol,idp)=> AuthenticationTypes.findAll({where:{protocol, idp, active:true}}),
 
 }

@@ -14,7 +14,6 @@ const sequelize = new Sequelize(database, user, password,dbInfo);
 
 config.sequelize = sequelize;
 
-
 const databasesetup = async rbacOpts => {
 
     console.log(chalk.blue('DATABASE SETUP'));
@@ -30,9 +29,9 @@ const databasesetup = async rbacOpts => {
         List.findOrCreate({ where: { 'list': 'BLACK' } }),
         List.findOrCreate({ where: { 'list': 'GREY' } }),
         List.findOrCreate({ where: { 'list': 'RED' } }),
-        AuthenticationTypes.findOrCreate({ where: { "protocol": "oauth2", "idp": "google" }, defaults: { "active": 1 } }),
-        AuthenticationTypes.findOrCreate({ where: { "protocol": "oauth2", "idp": "office365" }, defaults: { "active": 1 } }),
-        AuthenticationTypes.findOrCreate({ where: { "protocol": "saml", "idp": "office365" }, defaults: { "active": 1 } }),
+        AuthenticationTypes.findOrCreate({ where: { "protocol": "oauth2", "idp": "google" }, defaults: { "active": true } }),
+        AuthenticationTypes.findOrCreate({ where: { "protocol": "oauth2", "idp": "office365" }, defaults: { "active": true } }),
+        AuthenticationTypes.findOrCreate({ where: { "protocol": "saml", "idp": "office365" }, defaults: { "active": true } }),
         require('./rbac')(rbacOpts),
     ]
 

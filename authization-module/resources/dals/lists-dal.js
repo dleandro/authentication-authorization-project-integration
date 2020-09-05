@@ -20,13 +20,20 @@ module.exports = {
      */
     create: list => tryCatch(() =>List.create({list})),
 
+    /**
+     * Creates multiple list entries, the insertion order respects the order in which the elements are present on the array
+     * @param listArray
+     * @returns {Promise<Object|Error>}
+     */
+    createMultiple: listArray => tryCatch(() =>List.bulkCreate(listArray)),
+
 
     /**
      * Puts the active BIT to 0 of a list with id=listId, deactivates active list, it only deactivates because we don't wanna change inactive list's status for history purposes
      * @param {int} listId
      * @returns {*}
      */
-    deactivate: listId => tryCatch(() => List.update({ active: 0 }, { where: { id: listId } })),
+    deactivate: listId => tryCatch(() => List.update({ active: false }, { where: { id: listId } })),
 
     /**
      * Deletes a list by its id
@@ -56,7 +63,7 @@ module.exports = {
      * asks the database for all list entries that are active at the moment
      * @returns {PromiseLike<function(*=): *> | Promise<function(*=): *>}
      */
-    getActive: () => tryCatch(() => List.findAll({ where: { active: 1 } })),
+    getActive: () => tryCatch(() => List.findAll({ where: { active: true } })),
 
     // update query doesn't return the updated resource for some reason
     /**
