@@ -19,6 +19,11 @@ module.exports = {
         .then(perm=>perm[0])),
 
     //TODO: Needs testing
+    /**
+     * Creates multiple permissions entries, the insertion order respects the order in which the elements are present on the array
+     * @param permissionsArray
+     * @returns {Promise<Object|Error>}
+     */
     createMultiple: permissionsArray => tryCatch(() => rbac.createPermissions(permissionsArray,true).then(()=>Permission.bulkCreate(permissionsArray))),
 
     /**
