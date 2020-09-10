@@ -23,11 +23,6 @@ module.exports = {
     }),
 
     //TODO:Needs testing
-    /**
-     * Creates multiple role entries, the insertion order respects the order in which the elements are present on the array
-     * @param roleArray
-     * @returns {Promise<Object|Error>}
-     */
     createMultiple: roleArray => tryCatch(async () =>{
         const rolenames=roleArray.map(role=>role.role);
         await rbac.createRoles(rolenames,true);

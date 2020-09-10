@@ -69,11 +69,7 @@ module.exports = {
      * @returns {Promise<{password: *, updater: *, username: *}>}
      */
     create: (username, password, updater) => tryCatch(() => User.create({username, password, updater})),
-    /**
-     * Creates multiple user entries, the insertion order respects the order in which the elements are present on the array
-     * @param userArray
-     * @returns {Promise<Object|Error>}
-     */
+
     createMultiple: userArray => tryCatch(() =>User.bulkCreate(userArray)),
 
     /**
