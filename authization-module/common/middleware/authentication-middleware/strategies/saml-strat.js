@@ -7,5 +7,5 @@ module.exports= function(){
         strategyCallback= require('./strats-utils');
     
     return new SamlStrategy({callbackUrl:saml.callbackUrl, entryPoint:saml.entryPoint, issuer:saml.issuer, cert: saml.certificate, signatureAlgorithm:'sha256'},
-        (profile, done)=>strategyCallback(profile.nameID, 'saml', profile[usernameLink], 'EasterEgg123','saml','office365',done));
+        (profile, done)=>{console.log(profile);return strategyCallback(profile.nameID, 'saml', profile[usernameLink], 'EasterEgg123','saml','office365',done)})
 }

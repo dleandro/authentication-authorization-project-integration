@@ -10,6 +10,6 @@ module.exports = function(){
             clientSecret: azureAD.azure_client_secret,
             callbackURL: azureAD.callbackUrl,
             tenant:azureAD.tenant},
-        (accessToken, refreshToken, params, profile, done)=> strategyCallback(params.id_token, 'azureAD', jwt.decode(params.id_token).email, 'EasterEgg123','oauth2','office365',done));
+        (accessToken, refreshToken, params, profile, done)=> strategyCallback(jwt.decode(params.id_token).email, 'office365_oauth2', jwt.decode(params.id_token).email, 'EasterEgg123','oauth2','office365',done));
     
 }

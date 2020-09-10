@@ -27,8 +27,6 @@ const databasesetup = async rbacOpts => {
     // Set up default values for Lists and Available authentication identity providers
     const promiseArr = [
         List.findOrCreate({ where: { 'list': 'BLACK' } }),
-        List.findOrCreate({ where: { 'list': 'GREY' } }),
-        List.findOrCreate({ where: { 'list': 'RED' } }),
         AuthenticationTypes.findOrCreate({ where: { "protocol": "oauth2", "idp": "google" }, defaults: { "active": true } }),
         AuthenticationTypes.findOrCreate({ where: { "protocol": "oauth2", "idp": "office365" }, defaults: { "active": true } }),
         AuthenticationTypes.findOrCreate({ where: { "protocol": "saml", "idp": "office365" }, defaults: { "active": true } }),

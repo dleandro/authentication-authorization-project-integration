@@ -26,8 +26,8 @@ module.exports = {
      * @param {string} idp the id of an IDP
      * @returns {Promise<*|undefined>}
      */
-    getByIdp: idp => tryCatch(async () => {
-            const [firstIdp] = await Idp.findAll({where: {idp_id: idp}});
+    getByIdp: (idp,idpName) => tryCatch(async () => {
+            const [firstIdp] = await Idp.findAll({where: {idp_id: idp,idpname:idpName}});
             return firstIdp == null ? null : getById(firstIdp.user_id);
     }),
 

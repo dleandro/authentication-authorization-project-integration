@@ -37,7 +37,7 @@ module.exports = {
     },
     findUserByIdpOrCreate: async (idpId, idpName, username, password) => {
         // needs endpoint
-        const user = await users.getByIdp(idpId);
+        const user = await users.getByIdp(idpId,idpName);
         return user ? {id: user.id, idp: idpId, username: user.username} : users.create(username, password)
             .then(userId=>idps.create(idpId, idpName, userId.id)
                 .then(()=>({id: userId.id, idp_id: idpId, username})));
