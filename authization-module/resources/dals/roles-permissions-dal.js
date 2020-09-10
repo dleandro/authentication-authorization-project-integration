@@ -25,6 +25,11 @@ module.exports = {
         }),
 
     //TODO
+    /**
+     * Creates multiple role-permission entries, the insertion order respects the order in which the elements are present on the array
+     * @param rolePermissionArray
+     * @returns {Promise<Object|Error>}
+     */
     createMultiple: rolePermissionArray => tryCatch(() => RolePermission.bulkCreate(rolePermissionArray)),
     /**
      * Delete the association between a role and a permission
