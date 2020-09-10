@@ -87,7 +87,7 @@ const getFunctionalities = () => {
 
 module.exports = {
 
-    setup: async ({ app, db, rbac_opts }) => {
+    setup: async ({ app, db, rbac_opts,https }) => {
 
         if (app && db) {
 
@@ -126,8 +126,9 @@ module.exports = {
                     secret: config.cookieSecret,
                     cookie: {
                         maxAge: 1000 * 60 * 60 * 24,
-                        sameSite: config.env === 'production' ? 'none' : false,
-                        secure: config.env === 'production'},
+                        sameSite: https? 'none' : false,
+                        secure: https?true:false
+                    },
                 };
 
             // setup required middleware
