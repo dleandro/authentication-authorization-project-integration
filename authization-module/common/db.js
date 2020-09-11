@@ -5,12 +5,12 @@ const
 
 
 // setup database connection with sequelize
-const {database, dbms, host, password, user} = config.database_opts;
-let dbInfo ={host, dialect: dbms, query: {raw: true}};
+const { database, dbms, host, password, user } = config.database_opts;
+let dbInfo = { host, dialect: dbms, query: { raw: true } };
 if (process.env.INSTANCE_CONNECTION_NAME) {
-    dbInfo = {...dbInfo,host: process.env.INSTANCE_CONNECTION_NAME,dialectOptions: {socketPath: process.env.INSTANCE_CONNECTION_NAME}};
+    dbInfo = { ...dbInfo, host: process.env.INSTANCE_CONNECTION_NAME, dialectOptions: { socketPath: process.env.INSTANCE_CONNECTION_NAME } };
 }
-const sequelize = new Sequelize(database, user, password,dbInfo);
+const sequelize = new Sequelize(database, user, password, dbInfo);
 
 config.sequelize = sequelize;
 
@@ -27,9 +27,11 @@ const databasesetup = async rbacOpts => {
     // Set up default values for Lists and Available authentication identity providers
     const promiseArr = [
         List.findOrCreate({ where: { 'list': 'BLACK' } }),
-        AuthenticationTypes.findOrCreate({ where: { "protocol": "oauth2", "idp": "google" }, defaults: { "active": true } }),
-        AuthenticationTypes.findOrCreate({ where: { "protocol": "oauth2", "idp": "office365" }, defaults: { "active": true } }),
-        AuthenticationTypes.findOrCreate({ where: { "protocol": "saml", "idp": "office365" }, defaults: { "active": true } }),
+        AuthenticationTypes.upsert({ "active": config.google_oauth2.callbackUrl ? true : false, "idp": "google", "protocol": "oauth2" }),
+
+        AuthenticationTypes.upsert({ "active": config.office365_oauth2.callbackUrl ? true : false, "protocol": "oauth2", "idp": "office365" }),
+
+        AuthenticationTypes.upsert({ "active": config.office365_saml.callbackUrl ? true : false, "protocol": "saml", "idp": "office365" }),
         require('./rbac')(rbacOpts),
     ]
 

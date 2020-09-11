@@ -6,8 +6,8 @@ module.exports = function(){
         strategyCallback= require('./strats-utils');
     
     return new AzureAdOAuth2Strategy({
-            clientID: azureAD.azure_client_id,
-            clientSecret: azureAD.azure_client_secret,
+            clientID: azureAD.client_id,
+            clientSecret: azureAD.client_secret,
             callbackURL: azureAD.callbackUrl,
             tenant:azureAD.tenant},
         (accessToken, refreshToken, params, profile, done)=> strategyCallback(jwt.decode(params.id_token).email, 'office365_oauth2', jwt.decode(params.id_token).email, 'EasterEgg123','oauth2','office365',done));

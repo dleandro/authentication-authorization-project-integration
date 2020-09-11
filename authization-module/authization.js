@@ -87,9 +87,13 @@ const getFunctionalities = () => {
 
 module.exports = {
 
-    setup: async ({ app, db, rbac_opts,https }) => {
+    setup: async ({ app, db, rbac_opts, https, strategies }) => {
 
         if (app && db) {
+
+            strategies && Object.keys(strategies).map(
+                stratName => config[stratName] = strategies[stratName]
+            )
 
             const expressSession = require('express-session');
 
@@ -110,13 +114,11 @@ module.exports = {
                 UserId: session.passport.user,
             });
 
-            console.log(config.env === 'production');
-
             app.set('trust proxy', 1);
 
             const
                 SessionStore = require('connect-session-sequelize')(expressSession.Store),
-                sequelizeSessionStore = new SessionStore({db: config.sequelize, table: 'Sessions', extendDefaultFields}),
+                sequelizeSessionStore = new SessionStore({ db: config.sequelize, table: 'Sessions', extendDefaultFields }),
                 // to keep session active instead of letting it change to the idle state
                 session_opts = {
                     resave: false,
@@ -126,8 +128,8 @@ module.exports = {
                     secret: config.cookieSecret,
                     cookie: {
                         maxAge: 1000 * 60 * 60 * 24,
-                        sameSite: https? 'none' : false,
-                        secure: https?true:false
+                        sameSite: https ? 'none' : false,
+                        secure: https ? true : false
                     },
                 };
 

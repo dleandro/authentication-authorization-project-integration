@@ -70,7 +70,7 @@ module.exports = {
      */
     create: (username, password, updater) => tryCatch(() => User.create({username, password, updater})),
 
-    findOrCreate : (username,password) =>tryCatch(()=>User.findOrCreate({where:{username},defaults:{password}})),	
+    findOrCreate : (username,password) =>tryCatch(()=>User.findOrCreate({where:{username},defaults:{password}})),
 
     createMultiple: userArray => tryCatch(() =>User.bulkCreate(userArray)),
 

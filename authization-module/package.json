@@ -9,7 +9,7 @@
     "reportFile": "test-reporter.xml",
     "indent": 4
   },
-  "version": "1.0.49",
+  "version": "1.0.17",
   "description": "Module for authentication and authorization",
   "main": "authization.js",
   "scripts": {
@@ -44,6 +44,7 @@
     "sequelize": "^5.21.9"
   },
   "devDependencies": {
+    "express": "^4.17.1",
     "jest": "^26.0.1",
     "jest-sonar-reporter": "^2.0.0",
     "jsdoc": "^3.6.5"
