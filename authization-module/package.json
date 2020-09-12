@@ -9,7 +9,7 @@
     "reportFile": "test-reporter.xml",
     "indent": 4
   },
-  "version": "1.0.51",
+  "version": "1.0.52",
   "description": "Module for authentication and authorization",
   "main": "authization.js",
   "scripts": {
