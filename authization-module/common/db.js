@@ -7,9 +7,9 @@ const
 // setup database connection with sequelize
 const { database, dbms, host, password, user } = config.database_opts;
 
-const useSSL = false
+let useSSL = false
 if(process.env.USE_SSL != undefined)
-    if (process.env.USE_SSL.toLowerCase==="true") 
+    if (process.env.USE_SSL.toLowerCase()==="true")
         useSSL=true
 
 let dbInfo = { host, dialect: dbms, dialectOptions: { 
