@@ -41,7 +41,7 @@
     "passport-saml": "^3.1.0",
     "pg": "^8.2.1",
     "rbac": "^5.0.3",
-    "sequelize": "^5.21.9"
+    "sequelize": "^6.29.0"
   },
   "devDependencies": {
     "express": "^4.17.1",
